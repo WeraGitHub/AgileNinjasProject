@@ -1,23 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{title}}</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
 
-    <header>
-        <nav>
-            <ul>
-                <li>
-                    <a href="/home">Home</a>
-                </li>
-            </ul>
-        </nav>
-    </header>
 
-    <h1>{{title}} Page</h1>
-    <p>the above title page is passed from our routes.py</p>
+    <div class="question-card-container">
+        <div class="question">What is an EC2 Instance</div>
+    </div>
 
-</body>
-</html>
+    <div class="answer-card-container">
+        <div class="answer">something here</div>
+    </div>
+
+    <button>NEXT</button>
+
+{% endblock %}
