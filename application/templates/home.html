@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>{{ title }}</h1>
+<div class="welcome-container">
+    <div>
+        <h2>Welcome to our Quizlet website, where you can effectively enhance your learning with flashcards.</h2>
+        <p>Start your learning journey by selecting a category below!</p>
+    </div>
+
+    <div>
+        <button id="aws-button" class="category-button">AWS</button>
+        <button id="devops-button" class="category-button">DevOps</button>
+        <button id="python-button" class="category-button">Python</button>
+        <button id="cyber-button" class="category-button">Cyber</button>
+    </div>
+</div>
 
 {% endblock %}

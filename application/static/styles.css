@@ -19,15 +19,15 @@ p {
     padding-bottom: 20px;
 }
 
-button {
-    margin: 40px;
-    padding: 15px 40px 15px 40px;
+.category-button {
+    margin: 10px;
+    padding: 15px 10px;
     color: white;
     background-color: #000FF5;
     border: none;
-    border-radius: 10px;
+    border-radius: 7px;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 18px;
 }
 
 label {
@@ -43,3 +43,13 @@ label {
     margin: 0 auto;
     padding: 20px;
 }
+
+.welcome-container {
+    height: 300px;
+    width: 400px;
+    background-color: white;
+    border: 4px solid #FFD5AF;
+    margin: 30px auto;
+    padding: 20px;
+}
+
