@@ -6,14 +6,12 @@ from application.helper.init_questions import create_html_question_list
 @app.route('/')
 @app.route('/home')
 def home():
-    title_name = "Quizlet"
-    return render_template('home.html', title=title_name)
+    return render_template('home.html')
 
 
 @app.route('/question/<category>/<q_number>')   #  http://127.0.0.1:5000/question/aws/2
 def question(category, q_number):
-    title_name = "Quizlet"
-    return render_template('question.html', title=title_name, category=category, q_number=q_number)
+    return render_template('question.html', category=category, q_number=q_number)
 
 
 @app.route('/question_list')
