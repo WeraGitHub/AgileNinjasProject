@@ -13,4 +13,4 @@ def home():
 def question(category, q_number):
     questions = get_questions_from_category(category)
     question = questions[int(q_number)-1]
-    return render_template('question.html', question=question, q_number=q_number, q_total=len(questions))
+    return render_template('question.html', question=question, q_number=int(q_number), q_total=len(questions))
