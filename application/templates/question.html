@@ -3,7 +3,12 @@
 
 <div class="question-page-grid-container">
 
-    <a class="previous-button">Previous</a>
+    {% if q_number > 1 %}
+        <a class="previous-button"
+        href="/question/{{ question.get_category() }}/{{q_number - 1}}">
+            Previous
+        </a>
+    {% endif %}
 
     <div class="question-card-container
     {{ 'orange-border' if question.get_category() == 'AWS' else
@@ -23,7 +28,12 @@
 
     <div class="question-counter">{{ q_number }}/{{ q_total }}</div>
 
-    <a href="/question/Python/1"  class="next-button">Next</a>
+    {% if q_number < q_total %}
+        <a class="next-button"
+        href="/question/{{ question.get_category() }}/{{q_number + 1}}">
+            Next
+        </a>
+    {% endif %}
 
     <div onclick="toggleAnswer()" class="answer-card-container
         {{ 'orange-border' if question.get_category() == 'AWS' else
