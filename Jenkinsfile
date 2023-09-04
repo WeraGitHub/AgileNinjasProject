@@ -41,6 +41,13 @@ pipeline {
                 }
             }
         }
+        stage('Clean up') {
+            steps {
+                script {
+                    sh 'docker image prune --all --force --filter "until=48h"'
+                }
+            }
+        }
         stage('Refresh ASG') {
             steps {
                 script {
@@ -60,13 +67,6 @@ pipeline {
                             error "Failed to start instance refresh. Exit code: ${result}"
                         }
                     }
-                }
-            }
-        }
-        stage('Clean up') {
-            steps {
-                script {
-                    sh 'docker image prune --all --force --filter "until=48h"'
                 }
             }
         }
