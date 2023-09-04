@@ -6,18 +6,18 @@
     <a class="previous-button">Previous</a>
 
     <div class="question-card-container orange-border">
-        <div class="question">What is an EC2 Instance?</div>
+        <div class="question">{{ question.get_question() }}</div>
     </div>
 
-    <div class="category orange-border">AWS</div>
+    <div class="category orange-border">{{ question.get_category() }}</div>
 
-    <div class="question-counter">2/10</div>
+    <div class="question-counter">{{ q_number }}/{{ q_total }}</div>
 
-    <a class="next-button">Next</a>
+    <a href="/question/Python/1"  class="next-button">Next</a>
 
     <div class="answer-card-container orange-border" onclick="toggleAnswer()">
         <div id="instruction">Click here to reveal the answer</div>
-        <div id="answer">An EC2 (Elastic Compute Cloud) instance is a virtual server in the cloud that you can use to run applications, services, and more.</div>
+        <div id="answer">{{ question.get_answer() }}</div>
     </div>
 
 </div>
