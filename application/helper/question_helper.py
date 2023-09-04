@@ -11,13 +11,31 @@ def get_questions_from_category(category):
     return question_list
 
 
-def add_question(question, answer, category):
+def get_all_questions_from_db():
+    cursor = mysql.connect().cursor()
+    cursor.execute('SELECT * FROM questions')
+    question_list = []
+    for question_id, question, answer, category in cursor.fetchall():
+        question_list.append(Question(question_id, question, answer, category))
+    return question_list
+
+
+def add_question_to_db(question, answer, category):
     connection = mysql.connect()
     cursor = connection.cursor()
     cursor.execute('INSERT INTO questions (question, answer, category) VALUES (%s, %s, %s)', (question, answer, category))
     connection.commit()
 
 
-def delete_question(question_id):
-    cursor = mysql.connect().cursor()
+def update_question_in_db(id, question, answer, category):
+    connection = mysql.connect()
+    cursor = connection.cursor()
+    cursor.execute('UPDATE questions SET question=%s, answer=%s, category=%s WHERE id=%s', (question, answer, category, id))
+    connection.commit()
+
+
+def delete_question_from_db(question_id):
+    connection = mysql.connect()
+    cursor = connection.cursor()
     cursor.execute('DELETE FROM questions WHERE id=%s', (question_id,))
+    connection.commit()

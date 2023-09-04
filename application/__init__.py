@@ -1,5 +1,10 @@
+import os
+
 from flask import Flask
 from flaskext.mysql import MySQL
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'

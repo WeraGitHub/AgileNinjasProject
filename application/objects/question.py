@@ -8,13 +8,14 @@ class Question:
         Initializes a Question instance.
 
         Args:
+            question_id (int): The ID of the question.
             question (str): The text of the question.
             answer (str): The answer to the question.
             category (str): The category of the question.
         """
-        self._question_id = question_id
+        self._question_id = question_id  # Store the question id
         self._question = question  # Store the question text
-        self._answer = answer      # Store the answer to the question
+        self._answer = answer  # Store the answer to the question
         self._category = category  # Store the category of the question
 
     def get_question(self):
@@ -43,3 +44,6 @@ class Question:
             str: The category.
         """
         return self._category
+
+    def get_question_id(self):
+        return self._question_id
