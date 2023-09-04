@@ -1,6 +1,6 @@
 from flask import render_template
 from application import app
-from application.helper.init_questions import create_html_question_list
+from application.helper.question_helper import get_questions_from_category
 
 
 @app.route('/')
@@ -13,7 +13,3 @@ def home():
 def question(category, q_number):
     return render_template('question.html', category=category, q_number=q_number)
 
-
-@app.route('/question_list')
-def question_list():
-    return create_html_question_list()

@@ -3,7 +3,7 @@ class Question:
     A class representing a question with its answer and category.
     """
 
-    def __init__(self, question, answer, category):
+    def __init__(self, question_id, question, answer, category):
         """
         Initializes a Question instance.
 
@@ -12,6 +12,7 @@ class Question:
             answer (str): The answer to the question.
             category (str): The category of the question.
         """
+        self._question_id = question_id
         self._question = question  # Store the question text
         self._answer = answer      # Store the answer to the question
         self._category = category  # Store the category of the question
