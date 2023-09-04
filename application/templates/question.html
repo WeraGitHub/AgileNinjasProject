@@ -5,17 +5,31 @@
 
     <a class="previous-button">Previous</a>
 
-    <div class="question-card-container orange-border">
+    <div class="question-card-container
+    {{ 'orange-border' if question.get_category() == 'AWS' else
+        'blue-border' if question.get_category() == 'DevOps' else
+        'yellow-border' if question.get_category() == 'Python' else
+        'red-border' if question.get_category() == 'Cyber' else '' }}">
         <div class="question">{{ question.get_question() }}</div>
     </div>
 
-    <div class="category orange-border">{{ question.get_category() }}</div>
+    <div class="category
+        {{ 'orange-border' if question.get_category() == 'AWS' else
+        'blue-border' if question.get_category() == 'DevOps' else
+        'yellow-border' if question.get_category() == 'Python' else
+        'red-border' if question.get_category() == 'Cyber' else '' }}">
+        {{ question.get_category() }}
+    </div>
 
     <div class="question-counter">{{ q_number }}/{{ q_total }}</div>
 
     <a href="/question/Python/1"  class="next-button">Next</a>
 
-    <div class="answer-card-container orange-border" onclick="toggleAnswer()">
+    <div onclick="toggleAnswer()" class="answer-card-container
+        {{ 'orange-border' if question.get_category() == 'AWS' else
+        'blue-border' if question.get_category() == 'DevOps' else
+        'yellow-border' if question.get_category() == 'Python' else
+        'red-border' if question.get_category() == 'Cyber' else '' }}">
         <div id="instruction">Click here to reveal the answer</div>
         <div id="answer">{{ question.get_answer() }}</div>
     </div>
