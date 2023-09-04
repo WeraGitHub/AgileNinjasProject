@@ -46,4 +46,10 @@ class Question:
         return self._category
 
     def get_question_id(self):
+        """
+        Returns the ID of the question.
+
+        Returns:
+            int: The question ID.
+        """
         return self._question_id
