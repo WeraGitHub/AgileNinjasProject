@@ -1,6 +1,6 @@
 import unittest
 
-from question import Question
+from application.objects.question import Question
 
 
 class TestQuestion(unittest.TestCase):

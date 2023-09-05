@@ -22,13 +22,12 @@ pipeline {
         }
         stage('Test') {
             steps {
-                echo 'test placeholder'
-                // withPythonEnv('python3') {
-                //     sh 'pip install pytest'
-                //     sh 'pip install flask'
-                //     sh 'pip install requests'
-                //     sh 'python -m pytest tests/'
-                // }
+                withPythonEnv('python3') {
+                    sh 'pip install pytest'
+                    sh 'pip install flask'
+                    sh 'pip install requests'
+                    sh 'python -m pytest tests/'
+                }
             }
         }
         stage('Push to DockerHub') {
