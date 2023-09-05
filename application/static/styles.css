@@ -22,6 +22,14 @@ h1 {
     color: black;
 }
 
+h1 a {
+    text-decoration: none;
+    color: inherit;
+    &:hover {
+        color: black;
+    }
+}
+
 main {
     padding: 50px;
 }
