@@ -111,8 +111,8 @@ footer {
 .question-card-container {
     grid-column: 5 / span 11;
     grid-row: 2 /span 5;
-    padding-top: 70px;
-    padding-bottom: 15px;
+    padding: 70px 20px 15px 20px;
+    min-height: 113px;
 }
 .category {
     grid-column: 6 / span 3;
@@ -132,6 +132,7 @@ footer {
 .answer-card-container {
     grid-column: 5 / span 11;
     grid-row: 8 /span 3;
+    min-height: 70px;
     cursor: pointer;
     padding: 30px;
     font-size: 18px;
@@ -232,3 +233,9 @@ footer {
         background-color: #031469;
     }
 }
+
+
+
+/*    View all questions page styles    */
+
+
