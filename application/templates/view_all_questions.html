@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="welcome-container">
+    {% for question in questions %}
+        <form action="/question/edit/{{ question.get_question_id() }}" method="POST">
+            <input type="text" name="question" value="{{ question.get_question() }}" />
+            <input type="text" name="answer" value="{{ question.get_answer() }}" />
+            <select name="category">
+                <option{% if question.get_category() == 'AWS' %} selected {% endif  %}value="AWS">AWS</option>
+                <option{% if question.get_category() == 'DevOps' %} selected {% endif  %}value="DevOps">DevOps</option>
+                <option{% if question.get_category() == 'Python' %} selected {% endif  %}value="Python">Python</option>
+                <option{% if question.get_category() == 'Cyber' %} selected {% endif  %}value="Cyber">Cyber</option>
+            </select>
+            <input type="submit" value="Save" class="btn" />
+        </form>
+        <form action="/question/delete/{{ question.get_question_id() }}" method="POST">
+            <input type="submit" value="Delete" class="btn" />
+        </form>
+    {% endfor %}
+</div>
+
+{% endblock %}

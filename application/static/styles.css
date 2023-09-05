@@ -22,6 +22,14 @@ h1 {
     color: black;
 }
 
+h1 a {
+    text-decoration: none;
+    color: inherit;
+    &:hover {
+        color: black;
+    }
+}
+
 main {
     padding: 50px;
 }
@@ -127,6 +135,9 @@ footer {
     cursor: pointer;
     padding: 30px;
     font-size: 18px;
+    &:hover {
+        background-color: #fbfbff;
+    }
 }
 
 .question-counter, .previous-button, .next-button {
@@ -139,6 +150,11 @@ footer {
 
 .previous-button, .next-button {
     cursor: pointer;
+    text-decoration: none;
+    color: #4D4D4D;
+    &:hover {
+        background-color: #fbfbff;
+    }
 }
 
 .question-card-container, .answer-card-container, .category {
@@ -148,6 +164,15 @@ footer {
 
 .orange-border {
     border: 1px solid #FF9900;
+}
+.blue-border {
+    border: 1px solid #008AD7;
+}
+.yellow-border {
+    border: 1px solid #FFD43B;
+}
+.red-border {
+    border: 1px solid #ff5900;
 }
 
 #answer {

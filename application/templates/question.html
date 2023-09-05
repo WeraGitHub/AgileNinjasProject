@@ -3,21 +3,45 @@
 
 <div class="question-page-grid-container">
 
-    <a class="previous-button">Previous</a>
+    {% if q_number > 1 %}
+        <a class="previous-button"
+        href="/question/{{ question.get_category() }}/{{q_number - 1}}">
+            Previous
+        </a>
+    {% endif %}
 
-    <div class="question-card-container orange-border">
-        <div class="question">What is an EC2 Instance?</div>
+    <div class="question-card-container
+    {{ 'orange-border' if question.get_category() == 'AWS' else
+        'blue-border' if question.get_category() == 'DevOps' else
+        'yellow-border' if question.get_category() == 'Python' else
+        'red-border' if question.get_category() == 'Cyber' else '' }}">
+        <div class="question">{{ question.get_question() }}</div>
     </div>
 
-    <div class="category orange-border">AWS</div>
+    <div class="category
+        {{ 'orange-border' if question.get_category() == 'AWS' else
+        'blue-border' if question.get_category() == 'DevOps' else
+        'yellow-border' if question.get_category() == 'Python' else
+        'red-border' if question.get_category() == 'Cyber' else '' }}">
+        {{ question.get_category() }}
+    </div>
 
-    <div class="question-counter">2/10</div>
+    <div class="question-counter">{{ q_number }}/{{ q_total }}</div>
 
-    <a class="next-button">Next</a>
+    {% if q_number < q_total %}
+        <a class="next-button"
+        href="/question/{{ question.get_category() }}/{{q_number + 1}}">
+            Next
+        </a>
+    {% endif %}
 
-    <div class="answer-card-container orange-border" onclick="toggleAnswer()">
+    <div onclick="toggleAnswer()" class="answer-card-container
+        {{ 'orange-border' if question.get_category() == 'AWS' else
+        'blue-border' if question.get_category() == 'DevOps' else
+        'yellow-border' if question.get_category() == 'Python' else
+        'red-border' if question.get_category() == 'Cyber' else '' }}">
         <div id="instruction">Click here to reveal the answer</div>
-        <div id="answer">An EC2 (Elastic Compute Cloud) instance is a virtual server in the cloud that you can use to run applications, services, and more.</div>
+        <div id="answer">{{ question.get_answer() }}</div>
     </div>
 
 </div>
@@ -38,6 +62,5 @@
         }
     }
 </script>
-
 
 {% endblock %}
