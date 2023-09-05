@@ -5,6 +5,10 @@ pipeline {
         registry = "weronikadocker/agile-ninjas-project"
         registryCredentials = "3a52191a-43d2-4c5f-a012-ab491169cc48"
         dockerImage = ""
+        MYSQL_DATABASE_DB = "test"
+        MYSQL_DATABASE_PASSWORD = "test"
+        MYSQL_DATABASE_USER = "test"
+        MYSQL_DATABASE_HOST = "test"
     }
 
     stages {
@@ -23,10 +27,6 @@ pipeline {
         stage('Test') {
             steps {
                 withPythonEnv('python3') {
-                    sh 'export MYSQL_DATABASE_HOST="test"'
-                    sh 'export MYSQL_DATABASE_USER="test"'
-                    sh 'export MYSQL_DATABASE_PASSWORD="test"'
-                    sh 'export MYSQL_DATABASE_DB="test"'
                     sh 'pip install pytest'
                     sh 'pip install flask'
                     sh 'pip install requests'
