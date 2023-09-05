@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
-# Use an official Python runtime as a parent image (not sure what's the difference between slim and slim-bullseye
+# Use an official Python runtime as a parent image
 FROM python:3.11-slim
 
-# Set the working directory to /app. ⁠ (/app is more conventional name, but don't quote me on that)
+# Set the working directory to /app.
 WORKDIR /app
 
 # Copy only the requirements file initially, to leverage Docker cache
