@@ -23,6 +23,10 @@ pipeline {
         stage('Test') {
             steps {
                 withPythonEnv('python3') {
+                    sh 'export MYSQL_DATABASE_HOST="test"'
+                    sh 'export MYSQL_DATABASE_USER="test"'
+                    sh 'export MYSQL_DATABASE_PASSWORD="test"'
+                    sh 'export MYSQL_DATABASE_DB="test"'
                     sh 'pip install pytest'
                     sh 'pip install flask'
                     sh 'pip install requests'
