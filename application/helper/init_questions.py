@@ -109,6 +109,42 @@ def create_static_aws_category_question_list():
     return question_list
 
 
+def create_static_cyber_category_question_list():
+    questions_list = [
+        Question("What is Cryptography?",
+                 "Cryptography is the practice and study of techniques for securing information and communication mainly to protect the data from third parties that the data is not intended for.",
+                 "Cyber"),
+        Question("How is Encryption different from Hashing?",
+                 "Both Encryption and Hashing are used to convert readable data into an unreadable format. The difference is that the encrypted data can be converted back to original data by the process of decryption but the hashed data cannot be converted back to original data.",
+                 "Cyber"),
+        Question("What is a Firewall and why is it used?",
+                 "A Firewall is a network security system set on the boundaries of the system/network that monitors and controls network traffic. Firewalls are mainly used to protect the system/network from viruses, worms, malware, etc. Firewalls can also be to prevent remote access and content filtering.",
+                 "Cyber"),
+        Question("How is Encryption different from Hashing?",
+                 "",
+                 "Cyber"),
+        Question("What is traceroute? Why is it used?",
+                 "Traceroute is a tool that shows the path of a packet. It lists all the points (mainly routers) that the packet passes through. This is used mostly when the packet is not reaching its destination. Traceroute is used to check where the connection stops or breaks to identify the point of failure.",
+                 "Cyber"),
+        Question("What is SSL Encryption",
+                 "SSL(Secure Sockets Layer) is the industry-standard security technology creating encrypted connections between Web Server and a Browser. This is used to maintain data privacy and to protect the information in online transactions. ",
+                 "Cyber"),
+        Question("What is a Brute Force Attack?",
+                 "Brute Force is a way of finding out the right credentials by repetitively trying all the permutations and combinations of possible credentials. In most cases, brute force attacks are automated where the tool/software automatically tries to login with a list of credentials.",
+                 "Cyber"),
+        Question("What is a three-way handshake?",
+                 "A three-way handshake is a method used in a TCP/IP network to create a connection between a host and a client. It’s called a three-way handshake because it is a three-step method in which the client and server exchanges packets. ",
+                 "Cyber"),
+        Question("What is a Botnet?",
+                 "A Botnet is a group of internet-connected devices such as servers, PCs, mobile devices, etc., that are affected and controlled by malware.",
+                 "Cyber"),
+        Question("What is the difference between hashing and encryption?",
+                 "Both hashing and encryption are used to convert readable data into an unreadable format. The significant difference is that encrypted data can be transformed into original data by decryption, whereas hashed data cannot be processed back to the original data.",
+                 "Cyber"),
+
+
+    ]
+
 def create_html_question_list():
     html = ""
     for question in create_static_python_category_question_list():
