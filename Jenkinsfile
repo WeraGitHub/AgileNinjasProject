@@ -26,6 +26,9 @@ pipeline {
                     sh 'pip install pytest'
                     sh 'pip install flask'
                     sh 'pip install requests'
+                    sh 'pip install flask-mysql'
+                    sh 'pip install cryptography'
+                    sh 'pip install python-dotenv'
                     sh 'python -m pytest tests/'
                 }
             }
