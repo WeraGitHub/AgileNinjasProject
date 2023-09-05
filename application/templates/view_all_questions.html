@@ -1,23 +1,49 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="welcome-container">
+<div class="all-questions-container">
+    <h2>List of all the questions</h2>
+    <p>This page is for admins ONLY</p>
+    <div class="space"></div>
     {% for question in questions %}
-        <form action="/question/edit/{{ question.get_question_id() }}" method="POST">
-            <input type="text" name="question" value="{{ question.get_question() }}" />
-            <input type="text" name="answer" value="{{ question.get_answer() }}" />
-            <select name="category">
-                <option{% if question.get_category() == 'AWS' %} selected {% endif  %}value="AWS">AWS</option>
-                <option{% if question.get_category() == 'DevOps' %} selected {% endif  %}value="DevOps">DevOps</option>
-                <option{% if question.get_category() == 'Python' %} selected {% endif  %}value="Python">Python</option>
-                <option{% if question.get_category() == 'Cyber' %} selected {% endif  %}value="Cyber">Cyber</option>
-            </select>
-            <input type="submit" value="Save" class="btn" />
-        </form>
-        <form action="/question/delete/{{ question.get_question_id() }}" method="POST">
-            <input type="submit" value="Delete" class="btn" />
-        </form>
+        <div class="editable-question">
+            <div class="line"></div>
+            <p class="p-question-id">Question id: {{ question.get_question_id() }}</p>
+            <div class="question-forms">
+                    <form action="/question/edit/{{ question.get_question_id() }}" method="POST">
+                    <textarea type="text" name="question" >{{ question.get_question() }}</textarea>
+                    <textarea type="text" name="answer" >{{ question.get_answer() }}</textarea>
+                    <select name="category">
+                        <option {% if question.get_category() =='AWS' %} selected {% endif  %}value="AWS">AWS</option>
+                        <option {% if question.get_category() =='DevOps' %} selected {% endif  %}value="DevOps">DevOps</option>
+                        <option {% if question.get_category() =='Python' %} selected {% endif  %}value="Python">Python</option>
+                        <option {% if question.get_category() =='Cyber' %} selected {% endif  %}value="Cyber">Cyber</option>
+                    </select>
+                    <input type="submit" value="Save" class="btn" />
+                </form>
+                <form action="/question/delete/{{ question.get_question_id() }}" method="POST">
+                    <input type="submit" value="Delete" class="btn delete-btn" />
+                </form>
+            </div>
+        </div>
     {% endfor %}
 </div>
+
+
+<script>
+    // Add event listeners to all the question id paragraphs
+    const questionIdParagraphs = document.querySelectorAll('.p-question-id');
+    questionIdParagraphs.forEach((paragraph) => {
+        paragraph.addEventListener('click', () => {
+            // Find the corresponding question-forms div and toggle its visibility
+            const questionFormsDiv = paragraph.nextElementSibling;
+            if (questionFormsDiv.style.display === 'none' || questionFormsDiv.style.display === '') {
+                questionFormsDiv.style.display = 'block';
+            } else {
+                questionFormsDiv.style.display = 'none';
+            }
+        });
+    });
+</script>
 
 {% endblock %}
