@@ -14,11 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code
 COPY . .
 
-# Set Flask environment to production
-ENV FLASK_ENV=debug
-
 # Make port 5000 available to the world outside this container
 EXPOSE 5000
 
 # Run app.py when the container launches
-CMD ["python", "app.py"]
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
