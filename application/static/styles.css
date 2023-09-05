@@ -132,7 +132,7 @@ footer {
 .answer-card-container {
     grid-column: 5 / span 11;
     grid-row: 8 /span 3;
-    min-height: 70px;
+    height: fit-content;
     cursor: pointer;
     padding: 30px;
     font-size: 18px;
