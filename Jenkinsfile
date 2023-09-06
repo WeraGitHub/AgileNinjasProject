@@ -17,7 +17,7 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/WeraGitHub/AgileNinjasProject.git'
             }
         }
-        stage('Build') {
+        stage('Build Docker image') {
             steps {
                 script {
                     dockerImage = docker.build(registry)

@@ -1,5 +1,5 @@
 # Import necessary modules and functions from Flask and the application
-from flask import render_template, request  # Import Flask functions for rendering templates and handling HTTP requests
+from flask import render_template, request
 from application import app  # Import the 'app' instance from the 'application' module
 from application.helper.question_helper import *  # Import functions from the 'question_helper' module
 
@@ -82,3 +82,15 @@ def delete_question(question_id):
 
     # Render a response template with a success message
     return render_template('add_question_response.html', message="Success!")
+
+
+# Error handler for all exceptions
+@app.errorhandler(500)
+def handle_exceptions(e):
+    """Handles all exceptions."""
+    return render_template('add_question_response.html', message="Sorry, the server is unavailable right now"), 500
+
+@app.errorhandler(404)
+def handle_404(e):
+    """Handles 404 exceptions."""
+    return render_template('add_question_response.html', message="404: Page Not Found. Sorry, the page you are looking for does not exist. Please try again."), 404
