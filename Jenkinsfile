@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         registry = "weronikadocker/agile-ninjas-project"
-        registryCredentials = "3a52191a-43d2-4c5f-a012-ab491169cc48"
+        registryCredentials = "w-docker-credentials"
         dockerImage = ""
         MYSQL_DATABASE_DB = "test"
         MYSQL_DATABASE_PASSWORD = "test"
