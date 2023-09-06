@@ -94,7 +94,21 @@ resource "aws_security_group" "rds_sg" {
     Name = "rds-security-group"
     Project = var.project
   }
-  // Add inbound and outbound rules as needed for your RDS access.
+  # Inbound: Allows MySQL (3306) traffic only from the EC2 instances' security group.
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    security_groups = aws_security_group.ec2_sg.id
+  }
+  # Outbound: Allows all outbound traffic to the EC2 instances' security group.
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = []
+    security_groups = aws_security_group.ec2_sg.id
+  }
 }
 
 resource "aws_security_group" "ec2_sg" {
@@ -105,8 +119,45 @@ resource "aws_security_group" "ec2_sg" {
     Name = "web-app-sg"
     Project = var.project
   }
-  // Add inbound rules as needed for your application.
+  # Inbound: Allows HTTP (80) traffic only from the Load Balancer's security group.
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    security_groups = aws_security_group.lb_sg.id
+  }
+  # Outbound: Allows all outbound traffic to the RDS security group.
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = []
+    security_groups = aws_security_group.ec2_sg.id
+  }
 }
+
+resource "aws_security_group" "lb_sg" {
+  vpc_id = aws_vpc.agile_ninjas_VPC.id
+  name = "lb_sg"
+  description = "Load Balancer Security Group"
+  tags {
+    Name = "lb-sg"
+    Project = var.project
+  }
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Allow traffic from anywhere
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 
 # RDS
 resource "aws_db_instance" "agile-ninjas-rds-db" {
@@ -136,14 +187,28 @@ resource "aws_launch_configuration" "web-app-template" {
   image_id      = "ami-028eb925545f314d6"
   instance_type = "t2.micro"
   security_groups = [aws_security_group.ec2_sg.id]
+
   user_data = <<-EOF
               #!/bin/bash
+              # This script initializes the EC2 instance for the web application.
+
+              # Redirect script output to log file
               exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+
+              # Update the instance
               yum update -y
+
+              # Install Docker
               yum install -y docker
               service docker start
+
+              # Pull and run the Docker container
               docker pull weronikadocker/agile-ninjas-project
-              docker run -d -p 80:5000 -e MYSQL_DATABASE_HOST=${data.aws_db_instance.data-rds.endpoint} -e MYSQL_DATABASE_USER=${var.rds_user} -e MYSQL_DATABASE_PASSWORD=${var.rds_password} weronikadocker/agile-ninjas-project
+              docker run -d -p 80:5000 \
+                -e MYSQL_DATABASE_HOST=${data.aws_db_instance.data-rds.endpoint} \
+                -e MYSQL_DATABASE_USER=${var.rds_user} \
+                -e MYSQL_DATABASE_PASSWORD=${var.rds_password} \
+                weronikadocker/agile-ninjas-project
               EOF
   tags {
     Name = "web-app"
@@ -156,173 +221,65 @@ resource "aws_launch_configuration" "web-app-template" {
 
 
 # Auto Scaling Group
-resource "aws_autoscaling_group" "example" {
-  name                 = "example-asg"
+resource "aws_autoscaling_group" "auto-scaling-group" {
+  name                 = "auto-scaling-group"
   launch_configuration = aws_launch_configuration.web-app-template.name
   min_size             = 1
   desired_capacity     = 1
   max_size             = 1
-  vpc_zone_identifier  = aws_subnet.private_subnets[*].id
-  // Add other Auto Scaling Group settings as needed.
+  vpc_zone_identifier  = [aws_subnet.private_subnet-a.id, aws_subnet.private_subnet-b.id, aws_subnet.private_subnet-c.id]
+  health_check_type    = "ELB"
+  health_check_grace_period = 300  # 5 minutes grace period
+  cooldown = 300 # 5 minutes cooldown period
+  # Attach the ASG to the ALB target group
+  target_group_arns = [aws_lb_target_group.lb-target-group.arn]
+  tags {
+    Name = "auto-scaling-group"
+    Project = var.project
+  }
 }
 
 
-#resource "aws_internet_gateway" "example" {
-#  vpc_id = aws_vpc.agina_ninjas_VPC.id
-#  tags = {
-#    Name = "example-igw"
-#  }
-#}
-#
-#resource "aws_route_table" "example" {
-#  vpc_id = aws_vpc.agina_ninjas_VPC.id
-#  route {
-#    cidr_block = "0.0.0.0/0"
-#    gateway_id = aws_internet_gateway.example.id
-#  }
-#  tags = {
-#    Name = "example-rt"
-#  }
-#}
-#
-#resource "aws_route_table_association" "subnet_association" {
-#  count          = 2
-#  subnet_id      = aws_subnet.subnet_a[count.index].id
-#  route_table_id = aws_route_table.example.id
-#}
-#
-#resource "aws_instance" "web" {
-#  count         = 2
-#  ami           = "ami-028eb925545f314d6"
-#  instance_type = "t2.micro"
-#  subnet_id     = aws_subnet.subnet_a[count.index].id
-#  tags = {
-#    Name = "app-server"
-#  }
-#}
-#
-#resource "aws_security_group" "example" {
-#  name        = "example-sg"
-#  description = "Example security group"
-#  vpc_id      = aws_vpc.agina_ninjas_VPC.id
-#
-#  egress {
-#    from_port   = 0
-#    to_port     = 65535
-#    protocol    = "tcp"
-#    cidr_blocks = ["0.0.0.0/0"]
-#  }
-#
-#  ingress {
-#    from_port   = 80
-#    to_port     = 80
-#    protocol    = "tcp"
-#    cidr_blocks = ["0.0.0.0/0"]
-#  }
-#}
-#
-#resource "aws_security_group_rule" "egress" {
-#  type        = "egress"
-#  from_port   = 0
-#  to_port     = 65535
-#  protocol    = "tcp"
-#  cidr_blocks = ["0.0.0.0/0"]
-#  security_group_id = aws_security_group.example.id
-#}
-#
-#resource "aws_security_group_rule" "ingress" {
-#  type        = "ingress"
-#  from_port   = 80
-#  to_port     = 80
-#  protocol    = "tcp"
-#  cidr_blocks = ["0.0.0.0/0"]
-#  security_group_id = aws_security_group.example.id
-#}
-#
-#resource "aws_nat_gateway" "example" {
-#  allocation_id = aws_eip.example.id
-#  subnet_id     = aws_subnet.subnet_a[0].id # Use the public subnet in one AZ
-#}
-#
-#resource "aws_eip" "example" {
-#  count = 2
-#}
-#
-#resource "aws_launch_configuration" "example" {
-#  name_prefix          = "example-lc-"
-#  image_id             = "ami-028eb925545f314d6" # Your desired AMI
-#  instance_type        = "t2.micro"
-#  security_groups      = [aws_security_group.example.name]
-#  user_data            = file("user_data.sh")
-#  lifecycle {
-#    create_before_destroy = true
-#  }
-#}
-#
-#resource "aws_autoscaling_group" "example" {
-#  launch_configuration = aws_launch_configuration.example.name
-#  availability_zones  = aws_subnet.subnet_a[*].availability_zone
-#  target_group_arns   = [aws_lb_target_group.example.arn]
-#  min_size            = 2
-#  max_size            = 2
-#  desired_capacity    = 2
-#  vpc_zone_identifier = aws_subnet.subnet_a[*].id
-#
-#  tag {
-#    key                 = "Name"
-#    value               = "app-server"
-#    propagate_at_launch = true
-#  }
-#}
-#
-#resource "aws_lb" "example" {
-#  name               = "example-lb"
-#  internal           = false
-#  load_balancer_type = "application"
-#  security_groups    = [aws_security_group.example.id]
-#  subnets            = aws_subnet.subnet_a[*].id
-#}
-#
-#resource "aws_lb_target_group" "example" {
-#  name     = "example-tg"
-#  port     = 80
-#  protocol = "HTTP"
-#  vpc_id   = aws_vpc.example.id
-#}
-#
-#resource "aws_lb_listener" "example" {
-#  load_balancer_arn = aws_lb.example.arn
-#  port              = 80
-#  protocol          = "HTTP"
-#
-#  default_action {
-#    type             = "fixed-response"
-#    fixed_response {
-#      content_type = "text/plain"
-#      status_code  = "200"
-#      content      = "OK"
-#    }
-#  }
-#}
-#
-#
-#provider "aws" {
-#  access_key = var.aws_access_key
-#  secret_key = var.aws_secret_key
-#  region     = var.aws_region
-#}
-#
-#resource "aws_instance" "web" {
-#  count	= "2"
-#  ami = "ami-028eb925545f314d6"
-#  instance_type = "t2.micro"
-#  tags = {
-#    Name = "W-webserver1"
-#    location = "UK"
-#    identity = "Weronika"
-#  }
-#}
-#
-#
-#
+# Application Load Balancer
+resource "aws_lb" "app-load-balancer" {
+  name = "app-load-balancer"
+  internal = false
+  load_balancer_type = "application"
+  subnets = [aws_subnet.private_subnet-a.id, aws_subnet.private_subnet-b.id, aws_subnet.private_subnet-c.id]
+  tags {
+    Name = "app-load-balancer"
+    Project = var.project
+  }
+}
 
+# Load balancer target group
+resource "aws_lb_target_group" "lb-target-group" {
+  name        = "lb-target-group"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.agile_ninjas_VPC.id
+  target_type = "instance"
+  tags {
+    Name = "lb-target-group"
+    Project = var.project
+  }
+}
+
+# Load balancer listener
+resource "aws_lb_listener" "load-balancer-listener" {
+  load_balancer_arn = aws_lb.app-load-balancer.arn
+  port              = 80
+  protocol          = "HTTP"
+  default_action {
+    type             = "fixed-response"
+    fixed_response {
+      content_type = "text/plain"
+      status_code  = "200"
+      content      = "OK"
+    }
+  }
+  tags {
+    Name = "lb-listener"
+    Project = var.project
+  }
+}
