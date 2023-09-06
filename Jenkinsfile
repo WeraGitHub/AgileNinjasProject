@@ -27,12 +27,7 @@ pipeline {
         stage('Test') {
             steps {
                 withPythonEnv('python3') {
-                    sh 'pip install pytest'
-                    sh 'pip install flask'
-                    sh 'pip install requests'
-                    sh 'pip install flask-mysql'
-                    sh 'pip install cryptography'
-                    sh 'pip install python-dotenv'
+                    sh 'pip install --no-cache-dir -r requirements.txt'
                     sh 'python -m pytest tests/'
                 }
             }
