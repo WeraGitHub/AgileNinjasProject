@@ -318,3 +318,23 @@ footer {
         background-color: #960867;
     }
 }
+
+
+footer a {
+    color: #4A4A4A;
+    font-size: 18px;
+    margin: 0px 16px 0px 0px;
+    padding: 8px 16px;
+    text-decoration: none;
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+footer{
+    border-top: 1px solid #011ba1;
+}
+
+footer p {
+    margin-top: 20px
+}
