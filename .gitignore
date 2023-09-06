@@ -40,3 +40,6 @@ ENV/
 
 # Ignore VS Code specific files
 .vscode/
+
+# terraform variables file
+*.tfvars
