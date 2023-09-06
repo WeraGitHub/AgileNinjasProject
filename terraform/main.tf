@@ -21,7 +21,7 @@ resource "aws_instance" "agile_app" {
         yum update -y
         yum install -y docker
         service docker start
-        docker pull weronikadocker/agile-ninjas-project
+        docker pull weronikadocker/agile-ninjas-project:latest
         docker run -d -p 80:5000 weronikadocker/agile-ninjas-project
               EOF
 }
