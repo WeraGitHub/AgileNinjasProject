@@ -1,1 +1,7 @@
 venv
+Jenkinsfile
+README.md
+userdata.txt
+**/.git
+.env
+.pytest_cache
