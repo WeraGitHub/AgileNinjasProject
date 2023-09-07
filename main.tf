@@ -227,26 +227,26 @@ resource "aws_launch_template" "web-app-template" {
 
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
   user_data = <<-EOF
-    #!/bin/bash
-    # This script initializes the EC2 instance for the web application.
+                #!/bin/bash
+                # This script initializes the EC2 instance for the web application.
 
-    # Redirect script output to log file
-    exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+                # Redirect script output to log file
+                exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
-    # Update the instance
-    yum update -y
+                # Update the instance
+                yum update -y
 
-    # Install Docker
-    yum install -y docker
-    service docker start
+                # Install Docker
+                yum install -y docker
+                service docker start
 
-    # Pull and run the Docker container
-    docker pull weronikadocker/agile-ninjas-project
-    docker run -d -p 80:5000 \
-      -e MYSQL_DATABASE_HOST=${data.aws_db_instance.data-rds.endpoint} \
-      -e MYSQL_DATABASE_USER=${var.rds_user} \
-      -e MYSQL_DATABASE_PASSWORD=${var.rds_password} \
-      weronikadocker/agile-ninjas-project
+                # Pull and run the Docker container
+                docker pull weronikadocker/agile-ninjas-project
+                docker run -d -p 80:5000 \
+                  -e MYSQL_DATABASE_HOST=${data.aws_db_instance.data-rds.endpoint} \
+                  -e MYSQL_DATABASE_USER=${var.rds_user} \
+                  -e MYSQL_DATABASE_PASSWORD=${var.rds_password} \
+                  weronikadocker/agile-ninjas-project
   EOF
 }
 # note on the User Data above: In this code, ${data.aws_db_instance.data-rds.endpoint} fetches the RDS instance's
