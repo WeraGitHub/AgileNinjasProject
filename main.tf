@@ -268,7 +268,7 @@ resource "aws_lb" "app-load-balancer" {
   internal = false
   load_balancer_type = "application"
   subnets = [aws_subnet.public_subnet-a.id, aws_subnet.public_subnet-b.id, aws_subnet.public_subnet-c.id]
-  security_groups = [aws_security_group.lb_sg]
+  security_groups = [aws_security_group.lb_sg.id]
 }
 
 # Load balancer target group
