@@ -213,7 +213,7 @@ data "aws_db_instance" "data-rds" {
 }
 
 # EC2 template
-resource "aws_launch_configuration" "web-app-template" {
+resource "aws_launch_template" "web-app-template" {
   name_prefix   = "web-app-lc-"
   image_id      = "ami-028eb925545f314d6"
   instance_type = "t2.micro"
@@ -250,7 +250,7 @@ resource "aws_launch_configuration" "web-app-template" {
 # Auto Scaling Group
 resource "aws_autoscaling_group" "auto-scaling-group" {
   name                 = "auto-scaling-group"
-  launch_configuration = aws_launch_configuration.web-app-template.name
+  launch_configuration = aws_launch_template.web-app-template.name
   min_size             = 1
   desired_capacity     = 1
   max_size             = 1
