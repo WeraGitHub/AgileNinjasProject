@@ -140,7 +140,7 @@ resource "aws_security_group" "rds_sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = []
+    cidr_blocks = ["0.0.0.0/0"]
     security_groups = [aws_security_group.ec2_sg.id]
   }
 }
@@ -161,7 +161,7 @@ resource "aws_security_group" "ec2_sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = []
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
@@ -278,10 +278,7 @@ resource "aws_lb_listener" "load-balancer-listener" {
   port              = 80
   protocol          = "HTTP"
   default_action {
-    type             = "fixed-response"
-    fixed_response {
-      content_type = "text/plain"
-      status_code  = "200"
-    }
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.lb-target-group.arn
   }
 }
