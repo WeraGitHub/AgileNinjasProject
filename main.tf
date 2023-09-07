@@ -30,10 +30,6 @@ resource "aws_vpc" "agile_ninjas_VPC" {
   cidr_block = "10.0.0.0/16"
   enable_dns_support = true
   enable_dns_hostnames = true
-  tags {
-    Name = "agile-ninjas-vpc"
-    Project = var.project
-  }
 }
 
 
@@ -44,10 +40,6 @@ resource "aws_subnet" "private_subnet-a" {
   cidr_block = "10.0.0.0/24"
   availability_zone = "eu-west-2a"
   map_public_ip_on_launch = false
-  tags {
-    Name = "private-subnet-a"
-    Project = var.project
-  }
 }
 
 resource "aws_subnet" "private_subnet-b" {
@@ -55,10 +47,6 @@ resource "aws_subnet" "private_subnet-b" {
   cidr_block = "10.0.1.0/24"
   availability_zone = "eu-west-2b"
   map_public_ip_on_launch = false
-  tags {
-    Name = "private-subnet-b"
-    Project = var.project
-  }
 }
 
 resource "aws_subnet" "private_subnet-c" {
@@ -66,10 +54,6 @@ resource "aws_subnet" "private_subnet-c" {
   cidr_block = "10.0.2.0/24"
   availability_zone = "eu-west-2c"
   map_public_ip_on_launch = false
-  tags {
-    Name = "private-subnet-c"
-    Project = var.project
-  }
 }
 
 
@@ -77,10 +61,6 @@ resource "aws_subnet" "private_subnet-c" {
 resource "aws_db_subnet_group" "private_subnet_group" {
   name = "private_subnet_group"
   subnet_ids = [aws_subnet.private_subnet-a.id, aws_subnet.private_subnet-b.id, aws_subnet.private_subnet-c.id]
-  tags {
-    Name = "private-subnet-group"
-    Project = var.project
-  }
 }
 
 
@@ -90,10 +70,6 @@ resource "aws_security_group" "rds_sg" {
   vpc_id = aws_vpc.agile_ninjas_VPC.id
   name = "rds_sg"
   description = "RDS Security Group"
-  tags {
-    Name = "rds-security-group"
-    Project = var.project
-  }
   # Inbound: Allows MySQL (3306) traffic only from the EC2 instances' security group.
   ingress {
     from_port   = 3306
@@ -115,10 +91,6 @@ resource "aws_security_group" "ec2_sg" {
   vpc_id = aws_vpc.agile_ninjas_VPC.id
   name = "ec2_sg"
   description = "EC2 Security Group"
-  tags {
-    Name = "web-app-sg"
-    Project = var.project
-  }
   # Inbound: Allows HTTP (80) traffic only from the Load Balancer's security group.
   ingress {
     from_port   = 80
@@ -140,10 +112,6 @@ resource "aws_security_group" "lb_sg" {
   vpc_id = aws_vpc.agile_ninjas_VPC.id
   name = "lb_sg"
   description = "Load Balancer Security Group"
-  tags {
-    Name = "lb-sg"
-    Project = var.project
-  }
   ingress {
     from_port   = 80
     to_port     = 80
@@ -170,10 +138,6 @@ resource "aws_db_instance" "agile-ninjas-rds-db" {
   password             = var.rds_password
   db_subnet_group_name = aws_db_subnet_group.private_subnet_group.name
   multi_az             = true # Enable multi-AZ deployment
-  tags {
-    Name = "web-app-rds"
-    Project = var.project
-  }
 }
 
 # Data block to fetch RDS endpoint
@@ -210,10 +174,6 @@ resource "aws_launch_configuration" "web-app-template" {
                 -e MYSQL_DATABASE_PASSWORD=${var.rds_password} \
                 weronikadocker/agile-ninjas-project
               EOF
-  tags {
-    Name = "web-app"
-    Project = var.project
-  }
 }
 # note on the User Data above: In this code, ${data.aws_db_instance.data-rds.endpoint} fetches the RDS instance's
 # endpoint (host) dynamically, and your EC2 instance will connect to the RDS instance without specifying a database name
@@ -230,13 +190,8 @@ resource "aws_autoscaling_group" "auto-scaling-group" {
   vpc_zone_identifier  = [aws_subnet.private_subnet-a.id, aws_subnet.private_subnet-b.id, aws_subnet.private_subnet-c.id]
   health_check_type    = "ELB"
   health_check_grace_period = 300  # 5 minutes grace period
-  cooldown = 300 # 5 minutes cooldown period
   # Attach the ASG to the ALB target group
   target_group_arns = [aws_lb_target_group.lb-target-group.arn]
-  tags {
-    Name = "auto-scaling-group"
-    Project = var.project
-  }
 }
 
 
@@ -246,10 +201,6 @@ resource "aws_lb" "app-load-balancer" {
   internal = false
   load_balancer_type = "application"
   subnets = [aws_subnet.private_subnet-a.id, aws_subnet.private_subnet-b.id, aws_subnet.private_subnet-c.id]
-  tags {
-    Name = "app-load-balancer"
-    Project = var.project
-  }
 }
 
 # Load balancer target group
@@ -259,10 +210,6 @@ resource "aws_lb_target_group" "lb-target-group" {
   protocol    = "HTTP"
   vpc_id      = aws_vpc.agile_ninjas_VPC.id
   target_type = "instance"
-  tags {
-    Name = "lb-target-group"
-    Project = var.project
-  }
 }
 
 # Load balancer listener
@@ -275,11 +222,6 @@ resource "aws_lb_listener" "load-balancer-listener" {
     fixed_response {
       content_type = "text/plain"
       status_code  = "200"
-      content      = "OK"
     }
-  }
-  tags {
-    Name = "lb-listener"
-    Project = var.project
   }
 }
