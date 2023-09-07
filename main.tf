@@ -214,33 +214,40 @@ data "aws_db_instance" "data-rds" {
 
 # EC2 template
 resource "aws_launch_template" "web-app-template" {
-  name_prefix   = "web-app-lc-"
+  name_prefix   = "web-app-lt-"
   image_id      = "ami-028eb925545f314d6"
   instance_type = "t2.micro"
-  security_groups = [aws_security_group.ec2_sg.id]
 
+  block_device_mappings {
+    device_name = "/dev/xvda"
+    ebs {
+      volume_size = 20
+    }
+  }
+
+  vpc_security_group_ids = [aws_security_group.ec2_sg.id]
   user_data = <<-EOF
-              #!/bin/bash
-              # This script initializes the EC2 instance for the web application.
+    #!/bin/bash
+    # This script initializes the EC2 instance for the web application.
 
-              # Redirect script output to log file
-              exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+    # Redirect script output to log file
+    exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
-              # Update the instance
-              yum update -y
+    # Update the instance
+    yum update -y
 
-              # Install Docker
-              yum install -y docker
-              service docker start
+    # Install Docker
+    yum install -y docker
+    service docker start
 
-              # Pull and run the Docker container
-              docker pull weronikadocker/agile-ninjas-project
-              docker run -d -p 80:5000 \
-                -e MYSQL_DATABASE_HOST=${data.aws_db_instance.data-rds.endpoint} \
-                -e MYSQL_DATABASE_USER=${var.rds_user} \
-                -e MYSQL_DATABASE_PASSWORD=${var.rds_password} \
-                weronikadocker/agile-ninjas-project
-              EOF
+    # Pull and run the Docker container
+    docker pull weronikadocker/agile-ninjas-project
+    docker run -d -p 80:5000 \
+      -e MYSQL_DATABASE_HOST=${data.aws_db_instance.data-rds.endpoint} \
+      -e MYSQL_DATABASE_USER=${var.rds_user} \
+      -e MYSQL_DATABASE_PASSWORD=${var.rds_password} \
+      weronikadocker/agile-ninjas-project
+  EOF
 }
 # note on the User Data above: In this code, ${data.aws_db_instance.data-rds.endpoint} fetches the RDS instance's
 # endpoint (host) dynamically, and your EC2 instance will connect to the RDS instance without specifying a database name
@@ -250,7 +257,11 @@ resource "aws_launch_template" "web-app-template" {
 # Auto Scaling Group
 resource "aws_autoscaling_group" "auto-scaling-group" {
   name                 = "auto-scaling-group"
-  launch_configuration = aws_launch_template.web-app-template.name
+#  launch_configuration = aws_launch_template.web-app-template.name
+  launch_template {
+    id = aws_launch_template.web-app-template.id
+    version = "$Latest"  # You can specify a specific version if needed
+  }
   min_size             = 1
   desired_capacity     = 1
   max_size             = 1
