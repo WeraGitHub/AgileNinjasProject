@@ -198,7 +198,14 @@ resource "aws_db_instance" "agile-ninjas-rds-db" {
   db_subnet_group_name = aws_db_subnet_group.private_subnet_group.name
   multi_az             = true # Enable multi-AZ deployment
   skip_final_snapshot  = true
+  vpc_security_group_ids = [aws_security_group.rds_sg.id]
 }
+
+#resource "aws_network_interface_sg_attachment" "rds_sg_attachment" {
+#  security_group_id    = aws_security_group.rds_sg.id
+##  network_interface_id = aws_instance.agile_app.primary_network_interface_id
+#  network_interface_id = aws_db_instance.agile-ninjas-rds-db.
+#}
 
 # Data block to fetch RDS endpoint
 data "aws_db_instance" "data-rds" {
@@ -261,6 +268,7 @@ resource "aws_lb" "app-load-balancer" {
   internal = false
   load_balancer_type = "application"
   subnets = [aws_subnet.public_subnet-a.id, aws_subnet.public_subnet-b.id, aws_subnet.public_subnet-c.id]
+  security_groups = [aws_security_group.lb_sg]
 }
 
 # Load balancer target group
@@ -282,3 +290,5 @@ resource "aws_lb_listener" "load-balancer-listener" {
     target_group_arn = aws_lb_target_group.lb-target-group.arn
   }
 }
+
+
