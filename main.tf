@@ -56,11 +56,69 @@ resource "aws_subnet" "private_subnet-c" {
   map_public_ip_on_launch = false
 }
 
+resource "aws_subnet" "public_subnet-a" {
+  vpc_id = aws_vpc.agile_ninjas_VPC.id
+  cidr_block = "10.0.3.0/24"
+  availability_zone = "eu-west-2a"
+  map_public_ip_on_launch = false
+}
+
+resource "aws_subnet" "public_subnet-b" {
+  vpc_id = aws_vpc.agile_ninjas_VPC.id
+  cidr_block = "10.0.4.0/24"
+  availability_zone = "eu-west-2b"
+  map_public_ip_on_launch = false
+}
+
+resource "aws_subnet" "public_subnet-c" {
+  vpc_id = aws_vpc.agile_ninjas_VPC.id
+  cidr_block = "10.0.5.0/24"
+  availability_zone = "eu-west-2c"
+  map_public_ip_on_launch = false
+}
 
 # Subnet group
 resource "aws_db_subnet_group" "private_subnet_group" {
   name = "private_subnet_group"
   subnet_ids = [aws_subnet.private_subnet-a.id, aws_subnet.private_subnet-b.id, aws_subnet.private_subnet-c.id]
+}
+
+
+# Internet Gateway
+resource "aws_internet_gateway" "public_igw" {
+  vpc_id = aws_vpc.agile_ninjas_VPC.id
+}
+
+# Create a route table for the public subnets
+resource "aws_route_table" "public_route_table" {
+  vpc_id = aws_vpc.agile_ninjas_VPC.id
+
+  tags = {
+    Name = "public-route-table"
+  }
+}
+
+# Create a route to send traffic from the public subnets to the internet gateway
+resource "aws_route" "public_route" {
+  route_table_id         = aws_route_table.public_route_table.id
+  destination_cidr_block = "0.0.0.0/0"  # All traffic (Internet)
+  gateway_id             = aws_internet_gateway.public_igw.id
+}
+
+# Associate public subnets with the public route table
+resource "aws_route_table_association" "public_subnet_association_a" {
+  subnet_id      = aws_subnet.public_subnet-a.id
+  route_table_id = aws_route_table.public_route_table.id
+}
+
+resource "aws_route_table_association" "public_subnet_association_b" {
+  subnet_id      = aws_subnet.public_subnet-b.id
+  route_table_id = aws_route_table.public_route_table.id
+}
+
+resource "aws_route_table_association" "public_subnet_association_c" {
+  subnet_id      = aws_subnet.public_subnet-c.id
+  route_table_id = aws_route_table.public_route_table.id
 }
 
 
@@ -75,7 +133,7 @@ resource "aws_security_group" "rds_sg" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    security_groups = aws_security_group.ec2_sg.id
+    security_groups = [aws_security_group.ec2_sg.id]
   }
   # Outbound: Allows all outbound traffic to the EC2 instances' security group.
   egress {
@@ -83,7 +141,7 @@ resource "aws_security_group" "rds_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = []
-    security_groups = aws_security_group.ec2_sg.id
+    security_groups = [aws_security_group.ec2_sg.id]
   }
 }
 
@@ -96,7 +154,7 @@ resource "aws_security_group" "ec2_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    security_groups = aws_security_group.lb_sg.id
+    security_groups = [aws_security_group.lb_sg.id]
   }
   # Outbound: Allows all outbound traffic to the RDS security group.
   egress {
@@ -104,7 +162,6 @@ resource "aws_security_group" "ec2_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = []
-    security_groups = aws_security_group.ec2_sg.id
   }
 }
 
@@ -134,10 +191,13 @@ resource "aws_db_instance" "agile-ninjas-rds-db" {
   engine               = "mysql"
   engine_version       = "8.0.33"
   instance_class       = "db.t3.micro"
+#  default_name         = "agile-ninjas-rds-db"
+#  database_name        = "agile_ninjas"
   username             = "root"
   password             = var.rds_password
   db_subnet_group_name = aws_db_subnet_group.private_subnet_group.name
   multi_az             = true # Enable multi-AZ deployment
+  skip_final_snapshot  = true
 }
 
 # Data block to fetch RDS endpoint
@@ -200,7 +260,7 @@ resource "aws_lb" "app-load-balancer" {
   name = "app-load-balancer"
   internal = false
   load_balancer_type = "application"
-  subnets = [aws_subnet.private_subnet-a.id, aws_subnet.private_subnet-b.id, aws_subnet.private_subnet-c.id]
+  subnets = [aws_subnet.public_subnet-a.id, aws_subnet.public_subnet-b.id, aws_subnet.public_subnet-c.id]
 }
 
 # Load balancer target group
