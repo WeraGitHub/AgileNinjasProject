@@ -223,15 +223,7 @@ resource "aws_launch_template" "web-app-template" {
 #    }
 #  }
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
-  user_data = <<EOF
-            #!/bin/bash
-            exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
-            yum update -y
-            yum install -y docker
-            service docker start
-            docker pull weronikadocker/agile-ninjas-project
-            docker run -d -p 80:5000 -e MYSQL_DATABASE_HOST=${data.aws_db_instance.data-rds.endpoint} -e MYSQL_DATABASE_USER=${var.rds_user} -e MYSQL_DATABASE_PASSWORD=${var.rds_password} -e MYSQL_DATABASE_DB=agile_ninjas weronikadocker/agile-ninjas-project
-            EOF
+  user_data =base64encode("init.sh")
 }
 # note on the User Data above: In this code, ${data.aws_db_instance.data-rds.endpoint} fetches the RDS instance's
 # endpoint (host) dynamically, and your EC2 instance will connect to the RDS instance without specifying a database name
