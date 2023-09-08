@@ -191,8 +191,7 @@ resource "aws_db_instance" "agile-ninjas-rds-db" {
   engine               = "mysql"
   engine_version       = "8.0.33"
   instance_class       = "db.t3.micro"
-#  default_name         = "agile-ninjas-rds-db"
-#  database_name        = "agile_ninjas"
+  db_name              = "agile_ninjas"
   username             = "root"
   password             = var.rds_password
   db_subnet_group_name = aws_db_subnet_group.private_subnet_group.name
@@ -224,7 +223,15 @@ resource "aws_launch_template" "web-app-template" {
 #    }
 #  }
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
-  user_data ="${base64encode("init.sh")}"
+  user_data = <<EOF
+            #!/bin/bash
+            exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+            yum update -y
+            yum install -y docker
+            service docker start
+            docker pull weronikadocker/agile-ninjas-project
+            docker run -d -p 80:5000 weronikadocker/agile-ninjas-project
+            EOF
 }
 # note on the User Data above: In this code, ${data.aws_db_instance.data-rds.endpoint} fetches the RDS instance's
 # endpoint (host) dynamically, and your EC2 instance will connect to the RDS instance without specifying a database name
