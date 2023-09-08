@@ -230,7 +230,7 @@ resource "aws_launch_template" "web-app-template" {
             yum install -y docker
             service docker start
             docker pull weronikadocker/agile-ninjas-project
-            docker run -d -p 80:5000 weronikadocker/agile-ninjas-project
+            docker run -d -p 80:5000 -e MYSQL_DATABASE_HOST=${data.aws_db_instance.data-rds.endpoint} -e MYSQL_DATABASE_USER=${var.rds_user} -e MYSQL_DATABASE_PASSWORD=${var.rds_password} -e MYSQL_DATABASE_DB=agile_ninjas weronikadocker/agile-ninjas-project
             EOF
 }
 # note on the User Data above: In this code, ${data.aws_db_instance.data-rds.endpoint} fetches the RDS instance's
