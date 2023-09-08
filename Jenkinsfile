@@ -5,6 +5,7 @@ pipeline {
         registry = "weronikadocker/agile-ninjas-project"
         registryCredentials = "w-docker-credentials"
         dockerImage = "" // You can add a description here if needed
+        MYSQL_DATABASE_DB = "test"
         MYSQL_DATABASE_PASSWORD = "test"
         MYSQL_DATABASE_USER = "test"
         MYSQL_DATABASE_HOST = "test"
