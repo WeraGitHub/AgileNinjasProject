@@ -1,4 +1,5 @@
 # AgileNinjasProject
+<img width="1506" alt="image" src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/9242a88a-e931-4d7d-a1b4-f3f77678396b">
 
 
 ## Getting Started locally
@@ -22,12 +23,18 @@
 
 
 For this application to work properly, you need to connect to a mysql database with table called 'questions'. Best option is to run a mysql container in docker.
-1. Make sure you have Docker Desktop on your computer
-2. Run this command in your terminal `docker run -d -p 3306:3306 --name mysql-db -e MYSQL_ROOT_PASSWORD=password mysql:latest`
-3. To create a 'mydatabase' with table 'questions' you might need to download a tool like Microsoft Workbench or Sequel Ace
-4. Once you connect to your mysql server you can create a database and then create a table by execting SQL Query
+8. Make sure you have Docker Desktop on your computer
+9. Run this command in your terminal `docker run -d -p 3306:3306 --name mysql-db -e MYSQL_ROOT_PASSWORD=password mysql:latest`
+10. To create a 'mydatabase' with table 'questions' you might need to download a tool like Microsoft Workbench or Sequel Ace
+11. Connect to it using details from the app:
+   
+   <img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/706feb1b-81f4-4a8f-bc83-cc5c1fa11366" width="400" height="auto">
 
-Now, when you run your application you should
+12. Once you connect to your mysql server you can create a database and then create a table by execting SQL Query, finished product should look like this:
+
+    <img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/d6e78830-1a55-4a66-a298-548de1888a7a" width="500" height="auto">
+
+#### Now, when you run your application you should have everything working correctly.
 
 
 
