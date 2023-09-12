@@ -223,7 +223,9 @@ resource "aws_launch_template" "web-app-template" {
 #    }
 #  }
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
-  user_data =base64encode("init.sh")
+#  user_data =base64encode(init.sh)
+#  user_data = file("./init.sh")
+  user_data = base64encode(file("./init.sh"))
 }
 # note on the User Data above: In this code, ${data.aws_db_instance.data-rds.endpoint} fetches the RDS instance's
 # endpoint (host) dynamically, and your EC2 instance will connect to the RDS instance without specifying a database name
