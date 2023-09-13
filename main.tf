@@ -89,6 +89,22 @@ resource "aws_internet_gateway" "public_igw" {
   vpc_id = aws_vpc.agile_ninjas_VPC.id
 }
 
+# Create an Elastic IP (EIP) for the NAT Gateway
+resource "aws_eip" "nat_gateway_eip" {
+}
+
+## NAT gateway
+resource "aws_nat_gateway" "nat_gateway" {
+  allocation_id = aws_eip.nat_gateway_eip.id
+  subnet_id = aws_subnet.public_subnet-a.id
+
+  tags = {
+    Name = "Nat gateway"
+  }
+
+  depends_on = [aws_internet_gateway.public_igw]
+}
+
 # Create a route table for the public subnets
 resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.agile_ninjas_VPC.id
@@ -98,8 +114,16 @@ resource "aws_route_table" "public_route_table" {
   }
 }
 
-# Create a route to send traffic from the public subnets to the internet gateway
-resource "aws_route" "public_route" {
+# Create a route to send local traffic within VPC for the public route table
+resource "aws_route" "public_route_local" {
+  route_table_id         = aws_route_table.public_route_table.id
+  destination_cidr_block = "10.0.0.0/16"  # Local VPC traffic
+  local = true
+
+}
+
+# Create a route to send internet-bound traffic to the Internet Gateway for the public route table
+resource "aws_route" "public_route_igw" {
   route_table_id         = aws_route_table.public_route_table.id
   destination_cidr_block = "0.0.0.0/0"  # All traffic (Internet)
   gateway_id             = aws_internet_gateway.public_igw.id
@@ -120,6 +144,46 @@ resource "aws_route_table_association" "public_subnet_association_c" {
   subnet_id      = aws_subnet.public_subnet-c.id
   route_table_id = aws_route_table.public_route_table.id
 }
+
+# Create a private route table
+resource "aws_route_table" "private_route_table" {
+  vpc_id = aws_vpc.agile_ninjas_VPC.id
+
+  tags = {
+    Name = "private-route-table"
+  }
+}
+
+# Create a route to send local traffic within VPC for the private route table
+resource "aws_route" "private_route_local" {
+  route_table_id         = aws_route_table.private_route_table.id
+  destination_cidr_block = "10.0.0.0/16"  # Local VPC traffic
+  nat_gateway_id = aws_nat_gateway.nat_gateway.id
+}
+
+# Create a route to send internet-bound traffic to the NAT Gateway for the private route table
+resource "aws_route" "private_route_nat_gateway" {
+  route_table_id         = aws_route_table.private_route_table.id
+  destination_cidr_block = "0.0.0.0/0"  # All traffic (NAT Gateway)
+  nat_gateway_id         = aws_nat_gateway.nat_gateway.id
+}
+
+# Associate private subnets with the private route table
+resource "aws_route_table_association" "private_subnet_association_a" {
+  subnet_id      = aws_subnet.private_subnet-a.id
+  route_table_id = aws_route_table.private_route_table.id
+}
+
+resource "aws_route_table_association" "private_subnet_association_b" {
+  subnet_id      = aws_subnet.private_subnet-b.id
+  route_table_id = aws_route_table.private_route_table.id
+}
+
+resource "aws_route_table_association" "private_subnet_association_c" {
+  subnet_id      = aws_subnet.private_subnet-c.id
+  route_table_id = aws_route_table.private_route_table.id
+}
+
 
 
 # Security groups
@@ -279,5 +343,6 @@ resource "aws_lb_listener" "load-balancer-listener" {
     target_group_arn = aws_lb_target_group.lb-target-group.arn
   }
 }
+
 
 
