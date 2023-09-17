@@ -7,30 +7,35 @@
 1. Clone the repository:
 `git clone https://github.com/WeraGitHub/AgileNinjasProject.git`
 
-3. Navigate to the project directory:
+2. Navigate to the project directory:
 `cd AgileNinjasProject`
 
-4. Install the required packages:
+3. Install the required packages:
 `pip install -r requirements.txt`
+
     use pip3 on Mac: `pip3 install -r requirements.txt` 
 
-5. Start the application:
+4. Start the application:
 `python app.py` or `python3 app.py`
 
    Alternatively you can manually navigate to the app.py file in your IDE and run it from here.
 
-7. Open your web browser and go to http://localhost:5000.
+5. Open your web browser and go to http://localhost:5000.
 
 
 For this application to work properly, you need to connect to a mysql database with table called 'questions'. Best option is to run a mysql container in docker.
-8. Make sure you have Docker Desktop on your computer
-9. Run this command in your terminal `docker run -d -p 3306:3306 --name mysql-db -e MYSQL_ROOT_PASSWORD=password mysql:latest`
-10. To create a 'mydatabase' with table 'questions' you might need to download a tool like Microsoft Workbench or Sequel Ace
-11. Connect to it using details from the app:
+
+6. Make sure you have Docker Desktop on your computer
+  
+7. Run this command in your terminal `docker run -d -p 3306:3306 --name mysql-db -e MYSQL_ROOT_PASSWORD=password mysql:latest`
+
+8. To create a 'mydatabase' with table 'questions' you might need to download a tool like Microsoft Workbench or Sequel Ace
+
+9. Connect to it using details from the app:
    
    <img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/706feb1b-81f4-4a8f-bc83-cc5c1fa11366" width="400" height="auto">
 
-12. Once you connect to your mysql server you can create a database and then create a table by execting SQL Query, finished product should look like this:
+10. Once you connect to your mysql server you can create a database and then create a table by execting SQL Query, finished product should look like this:
 
     <img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/d6e78830-1a55-4a66-a298-548de1888a7a" width="500" height="auto">
 
@@ -42,9 +47,15 @@ For this application to work properly, you need to connect to a mysql database w
 ## Virtual set up:
 
 ### We need one EC2 instance with Jenkins and Docker installed
+Make sure you have ports 22 and 8080 open.
+
+<img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/4cdeda46-28c9-434e-b1d3-79019ff045af" width="600" height="auto">
+
+#### Create your EC instance and connect to it via ssh.
 
 
-#### Installing Docker:
+#### Docker:
+Installing Docker:
 ```
 sudo yum -y install docker
 sudo systemctl start docker
@@ -68,7 +79,8 @@ https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/749834f7-8b46-4
 
 
 
-#### Installing Jenkins:
+#### Jenkins:
+Installing Jenkins:
 ```
 sudo yum -y update
 sudo yum remove java* -y
@@ -88,7 +100,9 @@ Open your browser and navigate to http://[ip-of-your-ec2-instance]:8080 .
 
 Enter the long password - see the last command in the console.
 
-Install suggested pluggins. Next, install 4 more pluggings (from the Available plugins list): 
+Install suggested pluggins. 
+
+Next, install 4 more pluggings (from the Available plugins list): 
 
 <img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/89b16e65-72c9-4587-b457-fd5fc0723594" width="600" height="auto">
 
