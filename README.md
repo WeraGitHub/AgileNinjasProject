@@ -36,14 +36,40 @@ For this application to work properly, you need to connect to a mysql database w
 
 #### Now, when you run your application you should have everything working correctly.
 
-
-
+<br /><br /><br />
 
 
 ## Virtual set up:
 
-Installing Jenkins:
+### We need one EC2 instance with Jenkins and Docker installed
 
+
+#### Installing Docker:
+```
+sudo yum -y install docker
+sudo systemctl start docker
+sudo docker info
+```
+Also, to not have to type sudo before docker commands every time, you can add your user docker to the group by:
+
+`sudo gpasswd -a ec2-user docker`
+
+Make sure you restart your ssh connection after that or try this command:
+
+`sudo systemctl restart docker`
+
+
+#### Webhook
+http://[ip-of-your-ec2-instance]:8080/github-webhook/
+
+
+
+https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/749834f7-8b46-4c39-902c-37cdcc70e1c9
+
+
+
+#### Installing Jenkins:
+```
 sudo yum -y update
 sudo yum remove java* -y
 sudo yum install -y java-17-amazon-corretto
@@ -56,16 +82,24 @@ sudo service jenkins start
 sudo chkconfig jenkins on
 
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+
+Open your browser and navigate to http://[ip-of-your-ec2-instance]:8080 . 
+
+Enter the long password - see the last command in the console.
+
+Install suggested pluggins. Next, install 4 more pluggings (from the Available plugins list): 
+
+<img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/89b16e65-72c9-4587-b457-fd5fc0723594" width="600" height="auto">
+
+And add your global credentials for DockerHub and AWS:
+
+<img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/ed5da949-dabc-46b9-ae9a-45a05284c6ff" width="600" height="auto">
+
+
+####
 
 
 
-Installing Docker:
+# TODO: Jenkins pipeline job screenshot + all the infrastructure
 
-sudo yum -y install docker
-sudo systemctl start docker
-sudo docker info
-
-Also, to not have to type sudo before docker commands every time, you can add your user docker to the group by:
-sudo gpasswd -a ec2-user docker
-Make sure you restart your ssh connection after that or try this command:
-sudo systemctl restart docker
