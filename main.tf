@@ -60,26 +60,27 @@ resource "aws_subnet" "public_subnet-a" {
   vpc_id = aws_vpc.agile_ninjas_VPC.id
   cidr_block = "10.0.3.0/24"
   availability_zone = "eu-west-2a"
-  map_public_ip_on_launch = false
+  map_public_ip_on_launch = true
 }
 
 resource "aws_subnet" "public_subnet-b" {
   vpc_id = aws_vpc.agile_ninjas_VPC.id
   cidr_block = "10.0.4.0/24"
   availability_zone = "eu-west-2b"
-  map_public_ip_on_launch = false
+  map_public_ip_on_launch = true
 }
 
 resource "aws_subnet" "public_subnet-c" {
   vpc_id = aws_vpc.agile_ninjas_VPC.id
   cidr_block = "10.0.5.0/24"
   availability_zone = "eu-west-2c"
-  map_public_ip_on_launch = false
+  map_public_ip_on_launch = true
 }
 
 # Subnet group
 resource "aws_db_subnet_group" "private_subnet_group" {
   name = "private_subnet_group"
+  description = "Private subnets group for our db"
   subnet_ids = [aws_subnet.private_subnet-a.id, aws_subnet.private_subnet-b.id, aws_subnet.private_subnet-c.id]
 }
 
@@ -109,25 +110,30 @@ resource "aws_nat_gateway" "nat_gateway" {
 resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.agile_ninjas_VPC.id
 
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.public_igw.id
+  }
+
   tags = {
     Name = "public-route-table"
   }
 }
-
-# Create a route to send local traffic within VPC for the public route table
-resource "aws_route" "public_route_local" {
-  route_table_id         = aws_route_table.public_route_table.id
-  destination_cidr_block = "10.0.0.0/16"  # Local VPC traffic
-  local = true
-
-}
-
-# Create a route to send internet-bound traffic to the Internet Gateway for the public route table
-resource "aws_route" "public_route_igw" {
-  route_table_id         = aws_route_table.public_route_table.id
-  destination_cidr_block = "0.0.0.0/0"  # All traffic (Internet)
-  gateway_id             = aws_internet_gateway.public_igw.id
-}
+#
+## Create a route to send local traffic within VPC for the public route table
+#resource "aws_route" "public_route_local" {
+#  route_table_id         = aws_route_table.public_route_table.id
+#  destination_cidr_block = "10.0.0.0/16"  # Local VPC traffic
+##  local = true
+#
+#}
+#
+## Create a route to send internet-bound traffic to the Internet Gateway for the public route table
+#resource "aws_route" "public_route_igw" {
+#  route_table_id         = aws_route_table.public_route_table.id
+#  destination_cidr_block = "0.0.0.0/0"  # All traffic (Internet)
+#  gateway_id             = aws_internet_gateway.public_igw.id
+#}
 
 # Associate public subnets with the public route table
 resource "aws_route_table_association" "public_subnet_association_a" {
@@ -149,24 +155,34 @@ resource "aws_route_table_association" "public_subnet_association_c" {
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.agile_ninjas_VPC.id
 
+#  route {
+#    cidr_block = "10.0.0.0/16"
+##    nat_gateway_id = aws_nat_gateway.nat_gateway.id
+#  }
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gateway.id
+  }
+
   tags = {
     Name = "private-route-table"
   }
 }
 
-# Create a route to send local traffic within VPC for the private route table
-resource "aws_route" "private_route_local" {
-  route_table_id         = aws_route_table.private_route_table.id
-  destination_cidr_block = "10.0.0.0/16"  # Local VPC traffic
-  nat_gateway_id = aws_nat_gateway.nat_gateway.id
-}
-
-# Create a route to send internet-bound traffic to the NAT Gateway for the private route table
-resource "aws_route" "private_route_nat_gateway" {
-  route_table_id         = aws_route_table.private_route_table.id
-  destination_cidr_block = "0.0.0.0/0"  # All traffic (NAT Gateway)
-  nat_gateway_id         = aws_nat_gateway.nat_gateway.id
-}
+## Create a route to send local traffic within VPC for the private route table
+#resource "aws_route" "private_route_local" {
+#  route_table_id         = aws_route_table.private_route_table.id
+#  destination_cidr_block = "10.0.0.0/16"  # Local VPC traffic
+#  nat_gateway_id = aws_nat_gateway.nat_gateway.id
+#}
+#
+## Create a route to send internet-bound traffic to the NAT Gateway for the private route table
+#resource "aws_route" "private_route_nat_gateway" {
+#  route_table_id         = aws_route_table.private_route_table.id
+#  destination_cidr_block = "0.0.0.0/0"  # All traffic (NAT Gateway)
+#  nat_gateway_id         = aws_nat_gateway.nat_gateway.id
+#}
 
 # Associate private subnets with the private route table
 resource "aws_route_table_association" "private_subnet_association_a" {
@@ -212,7 +228,7 @@ resource "aws_security_group" "rds_sg" {
 resource "aws_security_group" "ec2_sg" {
   vpc_id = aws_vpc.agile_ninjas_VPC.id
   name = "ec2_sg"
-  description = "EC2 Security Group"
+  description = "EC2 Security Group - allow HTTP traffic from ELB security group"
   # Inbound: Allows HTTP (80) traffic only from the Load Balancer's security group.
   ingress {
     from_port   = 80
@@ -232,7 +248,7 @@ resource "aws_security_group" "ec2_sg" {
 resource "aws_security_group" "lb_sg" {
   vpc_id = aws_vpc.agile_ninjas_VPC.id
   name = "lb_sg"
-  description = "Load Balancer Security Group"
+  description = "Load Balancer Security Group - allow incoming HTTP traffic from the internet"
   ingress {
     from_port   = 80
     to_port     = 80
@@ -290,6 +306,10 @@ resource "aws_launch_template" "web-app-template" {
 #  user_data =base64encode(init.sh)
 #  user_data = file("./init.sh")
   user_data = base64encode(file("./init.sh"))
+#  try this one next:
+#  user_data = "${file("./init.sh")}"
+#  another idea is to go back to having the script here instead of referencing the file.
+
 }
 # note on the User Data above: In this code, ${data.aws_db_instance.data-rds.endpoint} fetches the RDS instance's
 # endpoint (host) dynamically, and your EC2 instance will connect to the RDS instance without specifying a database name
@@ -318,7 +338,7 @@ resource "aws_autoscaling_group" "auto-scaling-group" {
 # Application Load Balancer
 resource "aws_lb" "app-load-balancer" {
   name = "app-load-balancer"
-  internal = false
+#  internal = false
   load_balancer_type = "application"
   subnets = [aws_subnet.public_subnet-a.id, aws_subnet.public_subnet-b.id, aws_subnet.public_subnet-c.id]
   security_groups = [aws_security_group.lb_sg.id]
