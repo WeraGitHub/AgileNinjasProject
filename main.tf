@@ -102,8 +102,6 @@ resource "aws_nat_gateway" "nat_gateway" {
   tags = {
     Name = "Nat gateway"
   }
-
-#  depends_on = [aws_internet_gateway.public_igw]
 }
 
 # Create a route table for the public subnets
@@ -309,24 +307,29 @@ resource "aws_launch_template" "web-app-template" {
 #  try this one next:
 #  user_data = "${file("./init.sh")}"
 #  another idea is to go back to having the script here instead of referencing the file.
-  user_data = <<EOF
-#!/bin/bash
-# This script initializes the EC2 instance for the web application.
-# Redirect script output to log file
-exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
-# Update the instance
-yum update -y
-# Install Docker
-yum install -y docker
-service docker start
-# Pull and run the Docker container
-docker pull weronikadocker/agile-ninjas-project
-docker run -d -p 80:5000 -e MYSQL_DATABASE_HOST=${data.aws_db_instance.data-rds.endpoint} -e MYSQL_DATABASE_USER=${var.rds_user} -e MYSQL_DATABASE_PASSWORD=${var.rds_password} -e MYSQL_DATABASE_DB=agile_ninjas weronikadocker/agile-ninjas-project
-EOF
+#  user_data = <<EOF
+##!/bin/bash
+## This script initializes the EC2 instance for the web application.
+## Redirect script output to log file
+#exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+## Update the instance
+#yum update -y
+## Install Docker
+#yum install -y docker
+#service docker start
+## Pull and run the Docker container
+#docker pull weronikadocker/agile-ninjas-project
+#docker run -d -p 80:5000 -e MYSQL_DATABASE_HOST="${data.aws_db_instance.data-rds.endpoint}" -e MYSQL_DATABASE_USER="${var.rds_user}" -e MYSQL_DATABASE_PASSWORD="${var.rds_password}" -e MYSQL_DATABASE_DB=agile_ninjas weronikadocker/agile-ninjas-project
+#EOF
+
+  user_data = templatefile("${path.module}/init.tpl",
+    {
+      db_endpoint   = data.aws_db_instance.data-rds.endpoint,
+      rds_user      = var.rds_user,
+      rds_password  = var.rds_password,
+    }
+  )
 }
-# note on the User Data above: In this code, ${data.aws_db_instance.data-rds.endpoint} fetches the RDS instance's
-# endpoint (host) dynamically, and your EC2 instance will connect to the RDS instance without specifying a database name
-# in the user_data script.
 
 
 # Auto Scaling Group
