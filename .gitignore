@@ -43,3 +43,7 @@ ENV/
 
 # terraform variables file
 *.tfvars
+
+# other terraform files
+.terraform.lock.hcl
+terraform-provider-aws*
