@@ -322,13 +322,13 @@ resource "aws_launch_template" "web-app-template" {
 #docker run -d -p 80:5000 -e MYSQL_DATABASE_HOST="${data.aws_db_instance.data-rds.endpoint}" -e MYSQL_DATABASE_USER="${var.rds_user}" -e MYSQL_DATABASE_PASSWORD="${var.rds_password}" -e MYSQL_DATABASE_DB=agile_ninjas weronikadocker/agile-ninjas-project
 #EOF
 
-  user_data = templatefile("${path.module}/init.tpl",
+  user_data = base64encode(templatefile("${path.module}/init.tpl",
     {
       db_endpoint   = data.aws_db_instance.data-rds.endpoint,
       rds_user      = var.rds_user,
       rds_password  = var.rds_password,
     }
-  )
+  ))
 }
 
 
