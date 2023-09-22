@@ -46,7 +46,7 @@ For this application to work properly, you need to connect to a mysql database w
 
 ## Virtual set up:
 
-### We need one EC2 instance with Jenkins and Docker installed
+### We need one EC2 instance with Jenkins, Docker and Terraform installed
 Make sure you have ports 22 and 8080 open.
 
 <img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/4cdeda46-28c9-434e-b1d3-79019ff045af" width="600" height="auto">
@@ -71,11 +71,25 @@ Make sure you restart your ssh connection after that or try this command:
 
 
 #### Webhook
+We need webhook set up, so when we make changes to our repo that triggers Jenkins job
+
+
 http://[ip-of-your-ec2-instance]:8080/github-webhook/
 
 
 
-https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/749834f7-8b46-4c39-902c-37cdcc70e1c9
+https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/749834f7-8b46-4c39-902c-37cdcc70e1c9 
+
+
+<br />
+
+#### Terraform
+Installing Terraform
+```
+sudo yum install -y yum-utils
+sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+sudo yum -y install terraform
+```
 
 
 
@@ -111,9 +125,20 @@ And add your global credentials for DockerHub and AWS:
 <img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/ed5da949-dabc-46b9-ae9a-45a05284c6ff" width="600" height="auto">
 
 
+Now you are ready to create a new scripted pipeline job:
+
+
+Run it and it all should all ok! 
+
+Hurraayy!
+
 ####
 
 
 
-# TODO: Jenkins pipeline job screenshot + all the infrastructure
+# TODO: Jenkins pipeline job screenshot + 
+
+# all the infrastructure
+
+# note: make sure you have mysql installed on the machine you are executing terraform file from.
 
