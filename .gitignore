@@ -47,3 +47,4 @@ ENV/
 # other terraform files
 .terraform.lock.hcl
 terraform-provider-aws*
+*.tfstate*
