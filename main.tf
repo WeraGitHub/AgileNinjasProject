@@ -361,7 +361,7 @@ resource "aws_db_instance" "agile-ninjas-rds-db" {
 
   provisioner "local-exec" {
     command = <<-EOT
-      mysql -h ${data.aws_db_instance.data-rds.endpoint} -P 3306 -u ${var.rds_user} -p${var.rds_password} <<EOF
+      mysql -h ${self.endpoint} -P 3306 -u ${var.rds_user} -p${var.rds_password} <<EOF
       CREATE TABLE questions (
         id int unsigned NOT NULL AUTO_INCREMENT,
         question varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
