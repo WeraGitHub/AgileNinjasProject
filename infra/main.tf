@@ -235,7 +235,7 @@ resource "aws_security_group" "lb_sg" {
 
 resource "aws_security_group" "pipe_sg" {
   vpc_id = aws_vpc.agile_ninjas_VPC.id
-  name = "ec2_sg"
+  name = "pipe_sg"
   description = "EC2 Security Group - allow HTTP traffic from ELB security group"
   # Inbound: Allows HTTP (80) traffic only from the Load Balancer's security group.
   ingress {
@@ -355,6 +355,7 @@ resource "aws_lb_listener" "load-balancer-listener" {
 
 # Pipeline EC2
 resource "aws_instance" "pipeline-ec2" {
+  subnet_id = aws_subnet.public_subnet-a.id
   ami      = "ami-028eb925545f314d6"
   instance_type = "t2.medium"
   vpc_security_group_ids = [aws_security_group.pipe_sg.id]
