@@ -109,6 +109,11 @@ resource "aws_route_table" "public_route_table" {
   vpc_id = aws_vpc.agile_ninjas_VPC.id
 
   route {
+    cidr_block = "10.0.0.0/16"
+    gateway_id = "local"  # Route traffic within the VPC locally
+  }
+
+  route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.public_igw.id
   }
@@ -140,9 +145,13 @@ resource "aws_route_table" "private_route_table" {
 
   route {
     cidr_block = "10.0.0.0/16"
-    nat_gateway_id = aws_nat_gateway.nat_gateway.id
+    gateway_id = "local"  # Route traffic within the VPC locally
   }
 
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_gateway.id
+  }
   tags = {
     Name = "private-route-table"
   }
@@ -178,6 +187,12 @@ resource "aws_security_group" "rds_sg" {
     to_port     = 3306
     protocol    = "tcp"
     security_groups = [aws_security_group.ec2_sg.id]
+  }
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    security_groups = [aws_security_group.pipe_sg.id]
   }
   # Outbound: Allows all outbound traffic to the EC2 instances' security group.
   egress {
