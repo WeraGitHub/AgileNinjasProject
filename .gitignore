@@ -45,6 +45,6 @@ ENV/
 *.tfvars
 
 # other terraform files
-.terraform.lock.hcl
+infra/.terraform.lock.hcl
 terraform-provider-aws*
 *.tfstate*
