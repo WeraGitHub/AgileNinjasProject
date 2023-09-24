@@ -236,13 +236,13 @@ resource "aws_security_group" "lb_sg" {
 resource "aws_security_group" "pipe_sg" {
   vpc_id = aws_vpc.agile_ninjas_VPC.id
   name = "pipe_sg"
-  description = "EC2 Security Group - allow HTTP traffic from ELB security group"
-  # Inbound: Allows HTTP (80) traffic only from the Load Balancer's security group.
+  description = "Pipeline EC2 Security Group - allow HTTP, ssh and tcp 8080 for Jenkins"
+  # Inbound: Allows HTTP (80) traffic from anywhere
   ingress {
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    security_groups = [aws_security_group.lb_sg.id]
+    cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
     from_port       = 8080
