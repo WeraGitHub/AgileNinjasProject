@@ -13,4 +13,4 @@ service docker start
 
 # Pull and run the Docker container
 docker pull weronikadocker/agile-ninjas-project
-docker run -d -p 80:5000 -e MYSQL_DATABASE_HOST="${db_endpoint}" -e MYSQL_DATABASE_USER="${rds_user}" -e MYSQL_DATABASE_PASSWORD="${rds_password}" -e MYSQL_DATABASE_DB=agile_ninjas weronikadocker/agile-ninjas-project
+docker run -d -p 80:5000 -e MYSQL_DATABASE_HOST=${db_endpoint} -e MYSQL_DATABASE_USER=${rds_user} -e MYSQL_DATABASE_PASSWORD=${rds_password} -e MYSQL_DATABASE_DB=agile_ninjas weronikadocker/agile-ninjas-project
