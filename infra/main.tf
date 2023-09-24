@@ -355,8 +355,7 @@ resource "aws_lb_listener" "load-balancer-listener" {
 
 # Pipeline EC2
 resource "aws_instance" "pipeline-ec2" {
-  name_prefix   = "pipeline-instance"
-  image_id      = "ami-028eb925545f314d6"
+  ami      = "ami-028eb925545f314d6"
   instance_type = "t2.medium"
   vpc_security_group_ids = [aws_security_group.pipe_sg.id]
   user_data = base64encode(templatefile("${path.module}/pipeinit.tpl",
@@ -366,5 +365,8 @@ resource "aws_instance" "pipeline-ec2" {
       rds_password  = var.rds_password,
     }
   ))
+  tags = {
+    Name = "pipeline-instance"
+  }
   depends_on = [aws_db_instance.agile-ninjas-rds-db]
 }
