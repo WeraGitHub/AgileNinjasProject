@@ -25,6 +25,7 @@ dnf install mysql80-community-release-el9-1.noarch.rpm -y
 dnf install mysql-community-server -y
 systemctl start mysqld
 
+# connect to our rds database using mysql and create our table and populate it with some questions
 mysql -h ${db_endpoint} -P 3306 -u ${rds_user} -p${rds_password} <<EOF
     USE agile_ninjas;
     CREATE TABLE questions (
