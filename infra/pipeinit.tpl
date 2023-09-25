@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script initializes the EC2 instance for the JEnkins and Docker and MySql for pipeline and such.
+# This script initializes the EC2 instance for the Jenkins and Docker and MySql for pipeline and such.
 
 # Update the instance
 yum update -y
@@ -26,7 +26,7 @@ systemctl start mysqld
 systemctl enable mysqld
 
 
-mysql -h "${db_endpoint}" -P 3306 -u ${rds_user} -p${rds_password} <<EOF
+mysql -h ${db_endpoint} -P 3306 -u ${rds_user} -p${rds_password} <<EOF
     USE agile_ninjas;
     CREATE TABLE questions (
       id int unsigned NOT NULL AUTO_INCREMENT,
