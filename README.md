@@ -133,6 +133,7 @@ Run it and it all should all ok!
 Hurraayy!
 
 ####
+![image](https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/4c98ff74-710d-46a1-85a1-acbf23e2fb54)
 
 
 
