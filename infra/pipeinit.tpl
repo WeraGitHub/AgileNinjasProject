@@ -21,7 +21,7 @@ chkconfig jenkins on
 
 # Install MySql
 wget https://dev.mysql.com/get/mysql80-community-release-el8-1.noarch.rpm
-yum localinstall mysql*.rpm
+yum localinstall mysql*.rpm -y
 yum install mysql
 
 mysql -h ${db_endpoint} -P 3306 -u ${rds_user} -p${rds_password} <<EOF
