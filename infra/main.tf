@@ -215,12 +215,6 @@ resource "aws_security_group" "ec2_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.lb_sg.id]
   }
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
   # Outbound: Allows all outbound traffic to the RDS security group.
   egress {
     from_port   = 0
@@ -257,13 +251,13 @@ resource "aws_security_group" "pipe_sg" {
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"]  # this should be set to your own and trusted IP address
   }
   ingress {
     from_port       = 8080
     to_port         = 8080
     protocol        = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"]  # this should be set to your own and trusted IP address
   }
   ingress {
     from_port   = 22
@@ -324,8 +318,8 @@ resource "aws_launch_template" "web-app-template" {
 
 # Auto Scaling Group
 resource "aws_autoscaling_group" "auto-scaling-group" {
-  name                 = "auto-scaling-group"
-#  launch_configuration = aws_launch_template.web-app-template.name
+  name                 = "autogroup"
+#  name = "AgileNinjas-ASG"
   launch_template {
     id = aws_launch_template.web-app-template.id
     version = "$Latest"  # You can specify a specific version if needed
