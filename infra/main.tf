@@ -311,7 +311,8 @@ resource "aws_launch_template" "web-app-template" {
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
   user_data = base64encode(templatefile("${path.module}/init.tpl",
     {
-      db_endpoint   = data.aws_db_instance.data-rds.endpoint,
+      # remove port number in case it's attached to the endpoint
+      db_endpoint   = replace(data.aws_db_instance.data-rds.endpoint, ":3306", ""),
       rds_user      = var.rds_user,
       rds_password  = var.rds_password,
     }
@@ -376,7 +377,7 @@ resource "aws_instance" "pipeline-ec2" {
   vpc_security_group_ids = [aws_security_group.pipe_sg.id]
   user_data = base64encode(templatefile("${path.module}/pipeinit.tpl",
     {
-      db_endpoint   = data.aws_db_instance.data-rds.endpoint,
+      db_endpoint   = replace(data.aws_db_instance.data-rds.endpoint, ":3306", ""),
       rds_user      = var.rds_user,
       rds_password  = var.rds_password,
     }
