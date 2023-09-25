@@ -20,9 +20,10 @@ service jenkins start
 chkconfig jenkins on
 
 # Install MySql
-wget https://dev.mysql.com/get/mysql80-community-release-el8-1.noarch.rpm
-yum localinstall mysql*.rpm -y
-yum install mysql
+wget https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+dnf install mysql80-community-release-el9-1.noarch.rpm -y
+dnf install mysql-community-server -y
+systemctl start mysqld
 
 mysql -h ${db_endpoint} -P 3306 -u ${rds_user} -p${rds_password} <<EOF
     USE agile_ninjas;
