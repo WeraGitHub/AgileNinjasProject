@@ -317,6 +317,8 @@ resource "aws_launch_template" "web-app-template" {
       rds_password  = var.rds_password,
     }
   ))
+  # Specify the dependency on the pipeline-ec2 - we need our table in RDS to be initialised thanks to the user_data script in the pipe-ec2
+  depends_on = [aws_instance.pipeline-ec2]
 }
 
 
