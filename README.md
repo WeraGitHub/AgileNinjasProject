@@ -44,102 +44,87 @@ For this application to work properly, you need to connect to a mysql database w
 <br /><br /><br />
 
 
-## Virtual set up:
+## Cloud set up:
 
-### We need one EC2 instance with Jenkins, Docker and Terraform installed
-Make sure you have ports 22 and 8080 open.
+### We can use our terraform files to create our infrastructure, including EC2 instance dedicated to running our CI/CD pipeline
 
-<img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/4cdeda46-28c9-434e-b1d3-79019ff045af" width="600" height="auto">
+1. Install terraform locally
 
-#### Create your EC instance and connect to it via ssh.
+    For linux:
+    ```
+    sudo yum install -y yum-utils
+    sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+    sudo yum -y install terraform
+    ```
+    For Mac:
+    
+    `brew install terraform`
+    
+    For Windows:
+    
+    `choco install terraform`
+    
+    Verify you have installed it successfully by running `terraform version` command.
 
+2. Fork and then clone this repo and cd into it and then into infra folder:
+    ```
+    git clone https://github.com/WeraGitHub/AgileNinjasProject.git
+    cd AgileNinjasProject/infra
+    ```
 
-#### Docker:
-Installing Docker:
-```
-sudo yum -y install docker
-sudo systemctl start docker
-sudo docker info
-```
-Also, to not have to type sudo before docker commands every time, you can add your user docker to the group by:
-
-`sudo gpasswd -a ec2-user docker`
-
-Make sure you restart your ssh connection after that or try this command:
-
-`sudo systemctl restart docker`
-
-
-#### Webhook
-We need webhook set up, so when we make changes to our repo that triggers Jenkins job
-
-
-http://[ip-of-your-ec2-instance]:8080/github-webhook/
-
-
-
-https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/749834f7-8b46-4c39-902c-37cdcc70e1c9 
-
-
-<br />
-
-#### Terraform
-Installing Terraform
-```
-sudo yum install -y yum-utils
-sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
-sudo yum -y install terraform
-```
+3. Create a local filewithin the infra folder called *terraform.tfvars* where you enter your credentials:
+   
+    <img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/0a16e55f-d6d9-441d-948c-d8029b4c5ec7" width="200" height="auto">
+   
+4. In your terminal confirm you are within the infra folder and initiate, validate (just in case), plan and apply terraform configuration, enter *yes* when prompted.
+    
+    `terraform innit`
+    
+    `terraform validate`
+    
+    `terraform plan`
+    
+    `terraform apply`
+    
+    Now you have fully funtional and nicely architected infrastructure, copy the load balancer link from your terminal and paste it into your browser! The application is up and running now! 🤩
 
 
+## CI/CD set up:
 
-#### Jenkins:
-Installing Jenkins:
-```
-sudo yum -y update
-sudo yum remove java* -y
-sudo yum install -y java-17-amazon-corretto
-sudo yum install git -y
-sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins.io/redhat-stable/jenkins.repo
-sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
-sudo yum install jenkins -y
+1. To set up our Jenkins Pipeline we need to connet to our *pipeline-instance* in AWS Console. Log in and navigate to you EC2 instances, select our pipeline-instance and connect to it using Connect button.
 
-sudo service jenkins start
-sudo chkconfig jenkins on
+   <img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/29347eab-8dfe-4c9d-bd9f-6f7f3d2122b8" width="550" height="auto">
 
-sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-```
+   <img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/abdfb2aa-7b68-4bb3-a249-8181e0c425a0" width="550" height="auto">
 
-Open your browser and navigate to http://[ip-of-your-ec2-instance]:8080 . 
+3. In this aws provided terminal use the command below to get the Jenkins password
 
-Enter the long password - see the last command in the console.
+   `sudo cat /var/lib/jenkins/secrets/initialAdminPassword`
 
-Install suggested pluggins. 
+    
+4. In another browser tab navigate to http://[Public Ip of the pipeline-instance]:8080 . This will open Jenkins and prompt you to enter the password (see step 2.).
 
-Next, install 4 more pluggings (from the Available plugins list): 
+5. Install all the suggested plugins and enter details for your Jenkins user.
 
-<img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/89b16e65-72c9-4587-b457-fd5fc0723594" width="600" height="auto">
+6. While the Jenkins is updating we can set up github webhook, so when we make changes to our repo that will trigger Jenkins job automatically.
 
-And add your global credentials for DockerHub and AWS:
-
-<img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/ed5da949-dabc-46b9-ae9a-45a05284c6ff" width="600" height="auto">
-
-
-Now you are ready to create a new scripted pipeline job:
-
-
-Run it and it all should all ok! 
-
-Hurraayy!
-
-####
-![image](https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/4c98ff74-710d-46a1-85a1-acbf23e2fb54)
+https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/69d11500-b3c8-493b-a864-d55f0bab860b
 
 
 
-# TODO: Jenkins pipeline job screenshot + 
+6. Next, install 4 more pluggings (from the Available plugins list): 
 
-# all the infrastructure
+    <img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/89b16e65-72c9-4587-b457-fd5fc0723594" width="600" height="auto">
 
-# note: make sure you have mysql installed on the machine you are executing terraform file from.
+7. Add your global credentials for DockerHub and AWS:
 
+    <img src="https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/ed5da949-dabc-46b9-ae9a-45a05284c6ff" width="600" height="auto">
+
+
+8. Now you are ready to create a new scripted pipeline job:
+
+    ![image](https://github.com/WeraGitHub/AgileNinjasProject/assets/67145460/4c98ff74-710d-46a1-85a1-acbf23e2fb54)
+
+    Run it and it all should all ok! 
+
+### Hurraayy! CI/CD pipeline is now set up and waiting for any changes to your main branch. 🤯
