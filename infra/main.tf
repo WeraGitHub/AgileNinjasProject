@@ -30,6 +30,10 @@ resource "aws_vpc" "agile_ninjas_VPC" {
   cidr_block = "10.0.0.0/16"
   enable_dns_support = true
   enable_dns_hostnames = true
+  tags = {
+    Name = "agile-ninjas_vpc"
+    project = var.project
+  }
 }
 
 
@@ -367,7 +371,7 @@ resource "aws_lb_listener" "load-balancer-listener" {
 
 # Pipeline EC2
 resource "aws_instance" "pipeline-ec2" {
-  subnet_id = aws_subnet.public_subnet-a.id
+  subnet_id = aws_subnet.public_subnet-b.id
   ami      = "ami-028eb925545f314d6"
   instance_type = "t2.medium"
   vpc_security_group_ids = [aws_security_group.pipe_sg.id]
