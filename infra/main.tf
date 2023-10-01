@@ -257,12 +257,28 @@ resource "aws_security_group" "pipe_sg" {
     protocol        = "tcp"
     cidr_blocks = ["0.0.0.0/0"]  # this should be set to your own and trusted IP address
   }
+  # for Jenkins
   ingress {
     from_port       = 8080
     to_port         = 8080
     protocol        = "tcp"
     cidr_blocks = ["0.0.0.0/0"]  # this should be set to your own and trusted IP address
   }
+  # for Grafana connection
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  # for Prometheus connection
+  ingress {
+    from_port   = 9090
+    to_port     = 9090
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  # for ssh connection
   ingress {
     from_port   = 22
     to_port     = 22
