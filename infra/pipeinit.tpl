@@ -105,8 +105,6 @@ sudo systemctl enable grafana-server.service
 
 
 
-#!/bin/bash
-
 # Install Prometheus
 useradd -m -s /bin/false prometheus
 mkdir /etc/prometheus
