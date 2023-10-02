@@ -396,6 +396,7 @@ resource "aws_instance" "pipeline-ec2" {
       db_endpoint   = replace(data.aws_db_instance.data-rds.endpoint, ":3306", ""),
       rds_user      = var.rds_user,
       rds_password  = var.rds_password,
+      lb_dns_name = aws_lb.app-load-balancer.dns_name,
     }
   ))
   tags = {

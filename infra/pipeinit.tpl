@@ -132,6 +132,11 @@ scrape_configs:
     # scheme defaults to 'http'.
     static_configs:
     - targets: ['localhost:9090']
+  - job_name: 'flask'
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+    static_configs:
+    - targets: ['${lb_dns_name}']
 EOL
 # Create Prometheus systemd service file
 cat > /etc/systemd/system/prometheus.service <<EOL
