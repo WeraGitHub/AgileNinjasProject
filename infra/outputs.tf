@@ -1,3 +1,3 @@
 output "site_address" {
-  value = aws_lb.app_load_balancer.dns_name
+  value = module.load_balancer.app_load_balancer_dns_name
 }
