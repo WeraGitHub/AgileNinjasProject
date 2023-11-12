@@ -1,7 +1,6 @@
 venv
 Jenkinsfile
 README.md
-infra/userdata.txt
 **/.git
 .env
 .pytest_cache

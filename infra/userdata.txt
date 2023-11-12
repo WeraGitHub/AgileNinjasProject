@@ -1,7 +1,0 @@
-#!/bin/bash
-exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
-yum update -y
-yum install -y docker
-service docker start
-docker pull weronikadocker/agile-ninjas-project
-docker run -d -p 80:5000 weronikadocker/agile-ninjas-project
