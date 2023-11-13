@@ -48,3 +48,4 @@ ENV/
 infra/.terraform.lock.hcl
 terraform-provider-aws*
 *.tfstate*
+.terraform/
