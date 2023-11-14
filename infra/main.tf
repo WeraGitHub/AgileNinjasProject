@@ -24,8 +24,8 @@ terraform {
 
 provider "aws" {
   #  you can provide access and secret keys via terminal as an environment var rather than doing it here.
-  access_key = var.aws_access_key
-  secret_key = var.aws_secret_key
+#  access_key = var.aws_access_key
+#  secret_key = var.aws_secret_key
   region     = var.aws_region
   # default tags, more info here: https://www.hashicorp.com/blog/default-tags-in-the-terraform-aws-provider
   default_tags {
